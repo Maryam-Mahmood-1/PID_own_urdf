@@ -64,7 +64,7 @@ private:
     message.layout.dim.push_back(std_msgs::msg::MultiArrayDimension());
     message.layout.dim[0].label = "width";
     message.layout.dim[0].size = 4;
-    message.layout.dim[0].stride = 4*4;
+    message.layout.dim[0].stride = 4 * 4;
     message.layout.dim[1].label = "height";
     message.layout.dim[1].size = 4;
     message.layout.dim[1].stride = 4;

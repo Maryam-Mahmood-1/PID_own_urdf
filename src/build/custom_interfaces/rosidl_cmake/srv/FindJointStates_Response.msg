@@ -1,7 +1,0 @@
-
-float64 q11
-float64 q21
-float64 q31
-float64 q12
-float64 q22
-float64 q32
