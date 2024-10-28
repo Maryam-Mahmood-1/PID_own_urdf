@@ -33,7 +33,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find gazebo_2_sim_vel)/meshes/base_link.STL" />
+          filename="$(find rrbot_description)/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -47,7 +47,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find gazebo_2_sim_vel)/meshes/base_link.STL" />
+          filename="$(find rrbot_description)/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -73,7 +73,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find gazebo_2_sim_vel)/meshes/Link_1.STL" />
+          filename="$(find rrbot_description)/meshes/Link_1.STL" />
       </geometry>
       <material
         name="">
@@ -87,7 +87,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find gazebo_2_sim_vel)/meshes/Link_1.STL" />
+          filename="$(find rrbot_description)/meshes/Link_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -131,7 +131,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find gazebo_2_sim_vel)/meshes/Link_2.STL" />
+          filename="$(find rrbot_description)/meshes/Link_2.STL" />
       </geometry>
       <material
         name="">
@@ -145,7 +145,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find gazebo_2_sim_vel)/meshes/Link_2.STL" />
+          filename="$(find rrbot_description)/meshes/Link_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -175,8 +175,8 @@
     </hardware>
     <joint name="joint_1">
       <command_interface name="position">
-          <param name="min">${0}</param>
-          <param name="max">${pi}</param>
+          <param name="min">0</param>
+          <param name="max">3.15</param>
         </command_interface>
         <command_interface name="velocity">
           <param name="min">-3.15</param>
