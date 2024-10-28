@@ -1,0 +1,7 @@
+[01m[K/home/maryammahmood/PID_based_control_rrbot/PID-based-SCARA-Robot-Position-and-Velocity-Control-And-Manipulation/src/rrbot_simulation_files/rrbot_gazebo/src/position_publisher.cpp:[m[K In member function ‘[01m[Kvoid FKin_Publisher::topic_callback(sensor_msgs::msg::JointState_<std::allocator<void> >::SharedPtr) const[m[K’:
+[01m[K/home/maryammahmood/PID_based_control_rrbot/PID-based-SCARA-Robot-Position-and-Velocity-Control-And-Manipulation/src/rrbot_simulation_files/rrbot_gazebo/src/position_publisher.cpp:67:38:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K;[m[K’ token
+   67 |     message.layout.dim[0].stride = 4*[01;31m[K;[m[K
+      |                                      [01;31m[K^[m[K
+gmake[2]: *** [CMakeFiles/fkin_publisher.dir/build.make:76: CMakeFiles/fkin_publisher.dir/src/position_publisher.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:147: CMakeFiles/fkin_publisher.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

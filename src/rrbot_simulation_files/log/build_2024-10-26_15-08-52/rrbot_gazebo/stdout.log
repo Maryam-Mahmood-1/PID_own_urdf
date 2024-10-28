@@ -1,0 +1,6 @@
+[ 16%] Built target end_eff_vel_control
+[ 33%] Built target ikin_publisher
+[ 58%] Built target joint_effort_control
+[ 58%] [32mBuilding CXX object CMakeFiles/fkin_publisher.dir/src/position_publisher.cpp.o[0m
+[ 83%] Built target switch_eff
+[ 91%] Built target switch_vel
