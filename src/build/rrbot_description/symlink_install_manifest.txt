@@ -1,11 +1,7 @@
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/config/rrbot.rviz
-/home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/gazebo/rrbot.gazebo.xacro
-/home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/gazebo/rrbot.materials.xacro
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/meshes/hokuyo.dae
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/launch/view_robot.launch.py
-/home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/ros2_control/rrbot.ros2_control.xacro
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/urdf/rrbot.urdf.xacro
-/home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/urdf/rrbot_description.urdf.xacro
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/environment/rrbot_description.dsv
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/ament_index/resource_index/package_run_dependencies/rrbot_description
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/ament_index/resource_index/parent_prefix_path/rrbot_description

@@ -4,3 +4,8 @@ custom_interfaces.egg-info/PKG-INFO
 custom_interfaces.egg-info/SOURCES.txt
 custom_interfaces.egg-info/dependency_links.txt
 custom_interfaces.egg-info/top_level.txt
+custom_interfaces/srv/__init__.py
+custom_interfaces/srv/_find_joint_states.py
+custom_interfaces/srv/_set_end_effector_velocity.py
+custom_interfaces/srv/_set_joint_states.py
+custom_interfaces/srv/_set_joint_velocity.py

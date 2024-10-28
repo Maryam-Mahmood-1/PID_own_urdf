@@ -66,13 +66,6 @@ def generate_launch_description():
         parameters=[robot_description]
     )
 
-    controller_manager = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[
-                {"robot_description": robot_description_config}, robot_controllers],
-        output="both",
-    )
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
                        arguments=['-topic', 'robot_description',
                                   '-entity', 'robot'],
@@ -130,7 +123,6 @@ def generate_launch_description():
     nodes = [
         gazebo,
         spawn_entity,
-        controller_manager,
         node_robot_state_publisher,
         joint_state_broadcaster_spawner,
         delay_robot_position_controller_spawner_after_joint_state_broadcaster_spawner,

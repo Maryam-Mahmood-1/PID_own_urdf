@@ -1,36 +1,220 @@
 <?xml version="1.0"?>
-<!-- Revolute-Revolute Manipulator -->
-<!--
-Copied and modified from ROS1 example -
-https://github.com/ros-simulation/gazebo_ros_demos/blob/kinetic-devel/rrbot_description/urdf/rrbot.xacro
--->
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="2dof_robot">
-  <xacro:arg name="prefix" default="" />
 
-  <!-- Import RRBot macro -->
-  <xacro:include filename="$(find rrbot_description)/urdf/rrbot_description.urdf.xacro" />
+<robot
+  name="link2_urdf" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <!-- Import Rviz colors -->
-  <xacro:include filename="$(find rrbot_description)/gazebo/rrbot.materials.xacro" />
-
-  <!-- Import RRBot ros2_control description -->
-  <xacro:include filename="$(find rrbot_description)/ros2_control/rrbot.ros2_control.xacro" />
-
-  <xacro:include filename="$(find rrbot_description)/gazebo/rrbot.gazebo.xacro" />
-
-  <!-- Used for fixing robot -->
   <link name="world"/>
-  <gazebo reference="world">
-    <static>true</static>
-  </gazebo>
 
-  <xacro:rrbot parent="world" prefix="$(arg prefix)">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-  </xacro:rrbot>
-
-  <xacro:rrbot_gazebo prefix="$(arg prefix)" />
+  <joint name="base_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    </joint>
+    
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.00049737 0.00026123 0.0072038"
+        rpy="0 0 0" />
+      <mass
+        value="6.9112" />
+      <inertia
+        ixx="0.046617"
+        ixy="0.00010077"
+        ixz="5.1488E-08"
+        iyy="0.046482"
+        iyz="-1.4461E-07"
+        izz="0.092984" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find gazebo_2_sim_vel)/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.77647 0.75686 0.73725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find gazebo_2_sim_vel)/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Link_1">
+    <inertial>
+      <origin
+        xyz="1.4551E-05 -0.0043711 0.069929"
+        rpy="0 0 0" />
+      <mass
+        value="1.4053" />
+      <inertia
+        ixx="0.0017174"
+        ixy="6.6784E-08"
+        ixz="3.5551E-07"
+        iyy="0.002626"
+        iyz="6.0024E-06"
+        izz="0.0017063" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find gazebo_2_sim_vel)/meshes/Link_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find gazebo_2_sim_vel)/meshes/Link_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_1"
+    type="continuous">
+    <origin
+      xyz="0 0 0.05"
+      rpy="0 0 3.1416" />
+    <parent
+      link="base_link" />
+    <child
+      link="Link_1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="3.14"
+      effort="1000"
+      velocity="0.3" />
+  </joint>
+  <link
+    name="Link_2">
+    <inertial>
+      <origin
+        xyz="-6.5548E-05 0.21409 0.034291"
+        rpy="0 0 0" />
+      <mass
+        value="3.4329" />
+      <inertia
+        ixx="0.0091312"
+        ixy="-2.4753E-06"
+        ixz="8.4256E-07"
+        iyy="0.0057112"
+        iyz="5.0607E-06"
+        izz="0.0099035" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find gazebo_2_sim_vel)/meshes/Link_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find gazebo_2_sim_vel)/meshes/Link_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_2"
+    type="revolute">
+    <origin
+      xyz="0 -0.02999999999948 0.107500000000395"
+      rpy="1.5707963267949 0 -3.14159265358979" />
+    <parent
+      link="Link_1" />
+    <child
+      link="Link_2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.9199"
+      upper="1.9199"
+      effort="1000"
+      velocity="0.3" />
+  </joint>
   
-  <xacro:rrbot_ros2_control
-    name="RRBot" prefix="$(arg prefix)" />
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="joint_1">
+      <command_interface name="position">
+          <param name="min">${0}</param>
+          <param name="max">${pi}</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.15</param>
+          <param name="max">3.15</param>
+        </command_interface>
+        <command_interface name="effort">
+          <param name="min">-100</param>
+          <param name="max">100</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+    </joint>
+
+    <joint name="joint_2">
+      <command_interface name="position">
+          <param name="min">${-1.9199}</param>
+          <param name="max">${1.9199}</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.15</param>
+          <param name="max">3.15</param>
+        </command_interface>
+        <command_interface name="effort">
+          <param name="min">-100</param>
+          <param name="max">100</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+    </joint>
+
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find rrbot_gazebo)/config/gazebo_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
 
 </robot>
