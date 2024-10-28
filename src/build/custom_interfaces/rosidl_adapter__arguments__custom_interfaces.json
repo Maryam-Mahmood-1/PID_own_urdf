@@ -1,0 +1,9 @@
+{
+  "package_name": "custom_interfaces",
+  "non_idl_tuples": [
+    "/home/maryammahmood/PID_own_urdf/src/custom_interfaces:srv/FindJointStates.srv",
+    "/home/maryammahmood/PID_own_urdf/src/custom_interfaces:srv/SetJointStates.srv",
+    "/home/maryammahmood/PID_own_urdf/src/custom_interfaces:srv/SetEndEffectorVelocity.srv",
+    "/home/maryammahmood/PID_own_urdf/src/custom_interfaces:srv/SetJointVelocity.srv"
+  ]
+}

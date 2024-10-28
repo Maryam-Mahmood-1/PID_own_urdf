@@ -1,0 +1,50 @@
+[0.008s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/rrbot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake /home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/rrbot_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/maryammahmood/PID_own_urdf/src/install/rrbot_description
+[0.071s] -- The C compiler identification is GNU 11.4.0
+[0.122s] -- The CXX compiler identification is GNU 11.4.0
+[0.127s] -- Detecting C compiler ABI info
+[0.195s] -- Detecting C compiler ABI info - done
+[0.201s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.201s] -- Detecting C compile features
+[0.201s] -- Detecting C compile features - done
+[0.203s] -- Detecting CXX compiler ABI info
+[0.274s] -- Detecting CXX compiler ABI info - done
+[0.279s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.279s] -- Detecting CXX compile features
+[0.280s] -- Detecting CXX compile features - done
+[0.283s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.418s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.464s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.558s] -- Configuring done
+[0.560s] -- Generating done
+[0.560s] -- Build files have been written to: /home/maryammahmood/PID_own_urdf/src/build/rrbot_description
+[0.563s] Invoked command in '/home/maryammahmood/PID_own_urdf/src/build/rrbot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake /home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/rrbot_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/maryammahmood/PID_own_urdf/src/install/rrbot_description
+[0.564s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/rrbot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/maryammahmood/PID_own_urdf/src/build/rrbot_description -- -j24 -l24
+[0.597s] Invoked command in '/home/maryammahmood/PID_own_urdf/src/build/rrbot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/maryammahmood/PID_own_urdf/src/build/rrbot_description -- -j24 -l24
+[0.631s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/rrbot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/maryammahmood/PID_own_urdf/src/build/rrbot_description
+[0.638s] -- Install configuration: ""
+[0.638s] -- Execute custom install script
+[0.639s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/config/rrbot.rviz
+[0.647s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/gazebo/rrbot.gazebo.xacro
+[0.654s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/gazebo/rrbot.materials.xacro
+[0.665s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/meshes/hokuyo.dae
+[0.672s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/launch/view_robot.launch.py
+[0.680s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/ros2_control/rrbot.ros2_control.xacro
+[0.687s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/urdf/rrbot.urdf.xacro
+[0.695s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/urdf/rrbot_description.urdf.xacro
+[0.702s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/environment/rrbot_description.dsv
+[0.710s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/ament_index/resource_index/package_run_dependencies/rrbot_description
+[0.719s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/ament_index/resource_index/parent_prefix_path/rrbot_description
+[0.728s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/environment/ament_prefix_path.sh
+[0.736s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/environment/ament_prefix_path.dsv
+[0.745s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/environment/path.sh
+[0.753s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/environment/path.dsv
+[0.760s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/local_setup.bash
+[0.767s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/local_setup.sh
+[0.776s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/local_setup.zsh
+[0.784s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/local_setup.dsv
+[0.793s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/package.dsv
+[0.800s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/ament_index/resource_index/packages/rrbot_description
+[0.808s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/cmake/rrbot_descriptionConfig.cmake
+[0.816s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/cmake/rrbot_descriptionConfig-version.cmake
+[0.824s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/package.xml
+[0.833s] Invoked command in '/home/maryammahmood/PID_own_urdf/src/build/rrbot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/maryammahmood/PID_own_urdf/src/build/rrbot_description
