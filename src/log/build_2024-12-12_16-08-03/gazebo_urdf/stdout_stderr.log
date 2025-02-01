@@ -1,0 +1,32 @@
+[ 16%] Built target switch_eff
+[ 25%] [32mBuilding CXX object CMakeFiles/joint_effort_control.dir/src/joint_effort_controller.cpp.o[0m
+[ 41%] Built target switch_vel
+[ 50%] [32mBuilding CXX object CMakeFiles/ikin_publisher.dir/src/joint_state_publisher.cpp.o[0m
+[ 58%] [32mBuilding CXX object CMakeFiles/end_eff_vel_control.dir/src/end_effector_velocity_controller.cpp.o[0m
+[ 75%] Built target fkin_publisher
+In file included from [01m[K/home/maryammahmood/PID_own_urdf/src/build/custom_interfaces/rosidl_generator_cpp/custom_interfaces/srv/find_joint_states.hpp:10[m[K,
+                 from [01m[K/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/gazebo_urdf/src/joint_state_publisher.cpp:1[m[K:
+[01m[K/home/maryammahmood/PID_own_urdf/src/build/custom_interfaces/rosidl_generator_cpp/custom_interfaces/srv/detail/find_joint_states__type_support.hpp:10:10:[m[K [01;31m[Kfatal error: [m[Kcustom_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp: No such file or directory
+   10 | #include [01;31m[K"custom_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/ikin_publisher.dir/build.make:76: CMakeFiles/ikin_publisher.dir/src/joint_state_publisher.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:277: CMakeFiles/ikin_publisher.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+In file included from [01m[K/home/maryammahmood/PID_own_urdf/src/build/custom_interfaces/rosidl_generator_cpp/custom_interfaces/srv/set_joint_states.hpp:10[m[K,
+                 from [01m[K/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/gazebo_urdf/src/joint_effort_controller.cpp:11[m[K:
+[01m[K/home/maryammahmood/PID_own_urdf/src/build/custom_interfaces/rosidl_generator_cpp/custom_interfaces/srv/detail/set_joint_states__type_support.hpp:10:10:[m[K [01;31m[Kfatal error: [m[Kcustom_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp: No such file or directory
+   10 | #include [01;31m[K"custom_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/joint_effort_control.dir/build.make:76: CMakeFiles/joint_effort_control.dir/src/joint_effort_controller.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:173: CMakeFiles/joint_effort_control.dir/all] Error 2
+In file included from [01m[K/home/maryammahmood/PID_own_urdf/src/build/custom_interfaces/rosidl_generator_cpp/custom_interfaces/srv/set_joint_velocity.hpp:10[m[K,
+                 from [01m[K/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/gazebo_urdf/src/end_effector_velocity_controller.cpp:11[m[K:
+[01m[K/home/maryammahmood/PID_own_urdf/src/build/custom_interfaces/rosidl_generator_cpp/custom_interfaces/srv/detail/set_joint_velocity__type_support.hpp:10:10:[m[K [01;31m[Kfatal error: [m[Kcustom_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp: No such file or directory
+   10 | #include [01;31m[K"custom_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/end_eff_vel_control.dir/build.make:76: CMakeFiles/end_eff_vel_control.dir/src/end_effector_velocity_controller.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:199: CMakeFiles/end_eff_vel_control.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

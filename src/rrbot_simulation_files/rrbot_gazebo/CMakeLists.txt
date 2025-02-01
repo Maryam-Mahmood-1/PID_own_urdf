@@ -45,4 +45,13 @@ install(DIRECTORY worlds
 install(DIRECTORY config
   DESTINATION share/${PROJECT_NAME}
 )
+install(PROGRAMS
+  src/joint_effort_controller.py
+  src/joint_velocity_controller.py
+  src/joint_angle_input.py
+  src/ros_node.py
+  src/ros_node1.py
+  src/ros_node2.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 ament_package()

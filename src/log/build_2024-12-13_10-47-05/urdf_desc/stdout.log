@@ -1,0 +1,9 @@
+-- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/maryammahmood/PID_own_urdf/src/build/urdf_desc
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/config/rrbot.rviz
+-- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_1.STL

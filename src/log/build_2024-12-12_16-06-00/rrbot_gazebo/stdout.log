@@ -1,0 +1,6 @@
+[  8%] [32mBuilding CXX object CMakeFiles/joint_effort_control.dir/src/joint_effort_controller.cpp.o[0m
+[ 16%] [32mBuilding CXX object CMakeFiles/end_eff_vel_control.dir/src/end_effector_velocity_controller.cpp.o[0m
+[ 33%] Built target switch_eff
+[ 41%] [32mBuilding CXX object CMakeFiles/ikin_publisher.dir/src/joint_state_publisher.cpp.o[0m
+[ 58%] Built target switch_vel
+[ 75%] Built target fkin_publisher

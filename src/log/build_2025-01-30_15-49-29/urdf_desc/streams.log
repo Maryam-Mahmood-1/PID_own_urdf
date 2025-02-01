@@ -1,0 +1,42 @@
+[0.013s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/maryammahmood/PID_own_urdf/src/build/urdf_desc -- -j24 -l24
+[0.051s] Invoked command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/maryammahmood/PID_own_urdf/src/build/urdf_desc -- -j24 -l24
+[0.059s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/maryammahmood/PID_own_urdf/src/build/urdf_desc
+[0.066s] -- Install configuration: ""
+[0.066s] -- Execute custom install script
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/config/rrbot.rviz
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_1.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_2.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_3.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_4.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_5.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_7.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/base_claw_link1.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/base_claw_link2.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/base_link.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/endeffector.STL
+[0.067s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/gear1.STL
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/gear1_claw.STL
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/gear2_claw.STL
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/gear2_link.STL
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/link_6.STL
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/launch/view_robot.launch.py
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/urdf/four.urdf.xacro
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/urdf/four_dof.urdf.xacro
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/urdf/rrbot.urdf.xacro
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/environment/urdf_desc.dsv
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/ament_index/resource_index/package_run_dependencies/urdf_desc
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/ament_index/resource_index/parent_prefix_path/urdf_desc
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/environment/ament_prefix_path.sh
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/environment/ament_prefix_path.dsv
+[0.068s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/environment/path.sh
+[0.069s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/environment/path.dsv
+[0.069s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/local_setup.bash
+[0.069s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/local_setup.sh
+[0.069s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/local_setup.zsh
+[0.069s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/local_setup.dsv
+[0.069s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/package.dsv
+[0.078s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/ament_index/resource_index/packages/urdf_desc
+[0.078s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/cmake/urdf_descConfig.cmake
+[0.078s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/cmake/urdf_descConfig-version.cmake
+[0.078s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/package.xml
+[0.081s] Invoked command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/maryammahmood/PID_own_urdf/src/build/urdf_desc

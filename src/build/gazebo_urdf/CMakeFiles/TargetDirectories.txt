@@ -1,0 +1,15 @@
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/uninstall.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/gazebo_urdf_uninstall.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/fkin_publisher.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/joint_effort_control.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/end_eff_vel_control.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/switch_eff.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/switch_vel.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/ikin_publisher.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/test.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/edit_cache.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/rebuild_cache.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/list_install_components.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/install.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/install/local.dir
+/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf/CMakeFiles/install/strip.dir

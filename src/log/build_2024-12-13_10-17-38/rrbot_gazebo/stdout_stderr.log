@@ -1,0 +1,39 @@
+[ 16%] Built target fkin_publisher
+[ 33%] Built target end_eff_vel_control
+[ 50%] Built target joint_effort_control
+[ 66%] Built target switch_eff
+[ 83%] Built target switch_vel
+[100%] Built target ikin_publisher
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/fkin_publisher
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/ikin_publisher
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/switch_eff
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/switch_vel
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/joint_effort_control
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/end_eff_vel_control
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/launch/rrbot_world.launch.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/worlds/rrbot.world
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/config/controllers.yaml
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/config/gazebo_controllers.yaml
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/joint_effort_controller.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/joint_velocity_controller.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/joint_angle_input.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/ros_node.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/ros_node1.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/ros_node2.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/ament_index/resource_index/package_run_dependencies/rrbot_gazebo
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/ament_index/resource_index/parent_prefix_path/rrbot_gazebo
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/environment/ament_prefix_path.sh
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/environment/ament_prefix_path.dsv
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/environment/path.sh
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/environment/path.dsv
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/local_setup.bash
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/local_setup.sh
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/local_setup.zsh
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/local_setup.dsv
+-- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/package.dsv
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/ament_index/resource_index/packages/rrbot_gazebo
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/cmake/rrbot_gazeboConfig.cmake
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/cmake/rrbot_gazeboConfig-version.cmake
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/package.xml

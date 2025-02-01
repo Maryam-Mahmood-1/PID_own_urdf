@@ -1,0 +1,124 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-0c26dd795168492237f7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "gazebo_urdf",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "end_eff_vel_control::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-end_eff_vel_control-edc3562573d0b6f82aa1.json",
+					"name" : "end_eff_vel_control",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "fkin_publisher::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-fkin_publisher-ad74a623f4ebd91586e6.json",
+					"name" : "fkin_publisher",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "gazebo_urdf_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-gazebo_urdf_uninstall-61ecd38bde7f5069a609.json",
+					"name" : "gazebo_urdf_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ikin_publisher::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ikin_publisher-d24d5aaaca2dc2000eef.json",
+					"name" : "ikin_publisher",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "joint_effort_control::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-joint_effort_control-55563077eb62c5af5a64.json",
+					"name" : "joint_effort_control",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "switch_eff::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-switch_eff-cc963bc4943646a3a58d.json",
+					"name" : "switch_eff",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "switch_vel::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-switch_vel-f18c045ddfb47c9a41f5.json",
+					"name" : "switch_vel",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-7e67942fe3143cd28ecf.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/maryammahmood/PID_own_urdf/src/build/gazebo_urdf",
+		"source" : "/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/gazebo_urdf"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

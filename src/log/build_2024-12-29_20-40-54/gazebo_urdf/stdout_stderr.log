@@ -1,0 +1,43 @@
+[35m[1mConsolidate compiler generated dependencies of target joint_effort_control[0m
+[35m[1mConsolidate compiler generated dependencies of target end_eff_vel_control[0m
+[35m[1mConsolidate compiler generated dependencies of target ikin_publisher[0m
+[35m[1mConsolidate compiler generated dependencies of target fkin_publisher[0m
+[35m[1mConsolidate compiler generated dependencies of target switch_vel[0m
+[35m[1mConsolidate compiler generated dependencies of target switch_eff[0m
+[ 16%] Built target ikin_publisher
+[ 33%] Built target end_eff_vel_control
+[ 50%] Built target fkin_publisher
+[ 75%] Built target switch_eff
+[ 83%] Built target switch_vel
+[100%] Built target joint_effort_control
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/fkin_publisher
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/ikin_publisher
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/switch_eff
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/switch_vel
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/joint_effort_control
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/end_eff_vel_control
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/share/gazebo_urdf/launch/rrbot_world.launch.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/share/gazebo_urdf/worlds/rrbot.world
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/share/gazebo_urdf/config/controllers.yaml
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/share/gazebo_urdf/config/four_c.yaml
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/share/gazebo_urdf/config/gazebo_controllers.yaml
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/share/gazebo_urdf/config/gazebo_four.yaml
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/joint_effort_controller.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/joint_velocity_controller.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/joint_vel_controller.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/motor_angles.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/joint_angle_input.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/ros_node.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/ros_node1.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/ros_node2.py
+-- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/gazebo_urdf/lib/gazebo_urdf/ros2_master.py
+[31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:204 (message):
+  ament_cmake_symlink_install_programs() can't find
+  '/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/gazebo_urdf/src/ros2_masterm.py'
+Call Stack (most recent call first):
+  ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:326 (ament_cmake_symlink_install_programs)
+  cmake_install.cmake:46 (include)
+
+[0m

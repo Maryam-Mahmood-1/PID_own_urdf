@@ -1,0 +1,20 @@
+[0.023s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/maryammahmood/PID_own_urdf/src/build/urdf_desc -- -j24 -l24
+[0.112s] Invoked command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/maryammahmood/PID_own_urdf/src/build/urdf_desc -- -j24 -l24
+[0.114s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/maryammahmood/PID_own_urdf/src/build/urdf_desc
+[0.133s] -- Install configuration: ""
+[0.133s] -- Execute custom install script
+[0.133s] -- Up-to-date symlink: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/config/rrbot.rviz
+[0.134s] -- Symlinking: /home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_1.STL
+[0.152s] CMake Error: failed to create symbolic link '/home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_1.STL': Permission denied
+[0.153s] [31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:302 (message):
+[0.154s]   Could not create symlink
+[0.154s]   '/home/maryammahmood/PID_own_urdf/src/install/urdf_desc/share/urdf_desc/meshes/Link_1.STL'
+[0.154s]   pointing to
+[0.155s]   '/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/urdf_desc/meshes/Link_1.STL'
+[0.155s] Call Stack (most recent call first):
+[0.155s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:96 (_ament_cmake_symlink_install_create_symlink)
+[0.156s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:314 (ament_cmake_symlink_install_directory)
+[0.156s]   cmake_install.cmake:46 (include)
+[0.156s] 
+[0.156s] [0m
+[0.179s] Invoked command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/maryammahmood/PID_own_urdf/src/build/urdf_desc

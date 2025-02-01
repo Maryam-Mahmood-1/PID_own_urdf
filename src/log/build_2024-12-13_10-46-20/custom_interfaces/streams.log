@@ -1,0 +1,23 @@
+[0.029s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/custom_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/maryammahmood/PID_own_urdf/src/build/custom_interfaces -- -j24 -l24
+[0.137s] [  1%] Built target custom_interfaces__cpp
+[0.140s] [ 12%] Built target custom_interfaces__rosidl_generator_c
+[0.158s] [ 12%] Built target ament_cmake_python_symlink_custom_interfaces
+[0.185s] [ 23%] Built target custom_interfaces__rosidl_typesupport_cpp
+[0.186s] [ 52%] Built target custom_interfaces__rosidl_typesupport_c
+[0.186s] [ 52%] Built target custom_interfaces__rosidl_typesupport_introspection_c
+[0.188s] [ 56%] Built target custom_interfaces__rosidl_typesupport_introspection_cpp
+[0.188s] [ 67%] Built target custom_interfaces__rosidl_typesupport_fastrtps_cpp
+[0.190s] [ 78%] Built target custom_interfaces__rosidl_typesupport_fastrtps_c
+[0.228s] [ 78%] Built target custom_interfaces
+[0.268s] [ 80%] Built target custom_interfaces__py
+[0.309s] [ 89%] Built target custom_interfaces__rosidl_generator_py
+[0.349s] [ 96%] Built target custom_interfaces__rosidl_typesupport_introspection_c__pyext
+[0.349s] [ 96%] Built target custom_interfaces__rosidl_typesupport_c__pyext
+[0.350s] [100%] Built target custom_interfaces__rosidl_typesupport_fastrtps_c__pyext
+[0.450s] running egg_info
+[0.451s] writing custom_interfaces.egg-info/PKG-INFO
+[0.451s] writing dependency_links to custom_interfaces.egg-info/dependency_links.txt
+[0.452s] writing top-level names to custom_interfaces.egg-info/top_level.txt
+[0.454s] reading manifest file 'custom_interfaces.egg-info/SOURCES.txt'
+[0.455s] writing manifest file 'custom_interfaces.egg-info/SOURCES.txt'
+[0.487s] [100%] Built target ament_cmake_python_build_custom_interfaces_egg

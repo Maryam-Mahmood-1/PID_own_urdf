@@ -1,0 +1,28 @@
+[0.012s] Invoking command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake /home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/urdf_desc -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/maryammahmood/PID_own_urdf/src/install/urdf_desc
+[0.068s] -- The C compiler identification is GNU 11.4.0
+[0.124s] -- The CXX compiler identification is GNU 11.4.0
+[0.130s] -- Detecting C compiler ABI info
+[0.194s] -- Detecting C compiler ABI info - done
+[0.200s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.200s] -- Detecting C compile features
+[0.200s] -- Detecting C compile features - done
+[0.202s] -- Detecting CXX compiler ABI info
+[0.284s] -- Detecting CXX compiler ABI info - done
+[0.289s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.289s] -- Detecting CXX compile features
+[0.290s] -- Detecting CXX compile features - done
+[0.295s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.447s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.497s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.557s] -- Configuring incomplete, errors occurred!
+[0.557s] See also "/home/maryammahmood/PID_own_urdf/src/build/urdf_desc/CMakeFiles/CMakeOutput.log".
+[0.558s] [31mCMake Error at /opt/ros/humble/share/ament_cmake_core/cmake/core/assert_file_exists.cmake:20 (message):
+[0.558s]   ament_environment_hooks() the passed hook file
+[0.558s]   '/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/urdf_desc/env-hooks/urdf_desc.dsv.in'
+[0.558s]   does not exist
+[0.558s] Call Stack (most recent call first):
+[0.558s]   /opt/ros/humble/share/ament_cmake_core/cmake/environment_hooks/ament_environment_hooks.cmake:35 (assert_file_exists)
+[0.558s]   CMakeLists.txt:11 (ament_environment_hooks)
+[0.558s] 
+[0.558s] [0m
+[0.560s] Invoked command in '/home/maryammahmood/PID_own_urdf/src/build/urdf_desc' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/maryammahmood/ws_moveit2/install/moveit_configs_utils:/home/maryammahmood/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake /home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/urdf_desc -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/maryammahmood/PID_own_urdf/src/install/urdf_desc

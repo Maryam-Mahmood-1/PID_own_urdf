@@ -8,3 +8,4 @@ joint_trajectory_controller:
   joints:
     - joint_1
     - joint_2
+    - joint_3

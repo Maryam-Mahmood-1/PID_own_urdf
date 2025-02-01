@@ -7,5 +7,6 @@
 #include "custom_interfaces/srv/detail/set_joint_velocity__struct.hpp"
 #include "custom_interfaces/srv/detail/set_joint_velocity__builder.hpp"
 #include "custom_interfaces/srv/detail/set_joint_velocity__traits.hpp"
+#include "custom_interfaces/srv/detail/set_joint_velocity__type_support.hpp"
 
 #endif  // CUSTOM_INTERFACES__SRV__SET_JOINT_VELOCITY_HPP_

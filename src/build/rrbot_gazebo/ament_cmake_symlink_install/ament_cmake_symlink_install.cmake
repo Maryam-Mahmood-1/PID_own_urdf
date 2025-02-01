@@ -322,6 +322,9 @@ ament_cmake_symlink_install_directory("/home/maryammahmood/PID_own_urdf/src/rrbo
 # install(DIRECTORY "config" "DESTINATION" "share/rrbot_gazebo")
 ament_cmake_symlink_install_directory("/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/rrbot_gazebo" DIRECTORY "config" "DESTINATION" "share/rrbot_gazebo")
 
+# install(PROGRAMS "src/joint_effort_controller.py" "src/joint_velocity_controller.py" "src/joint_angle_input.py" "src/ros_node.py" "src/ros_node1.py" "src/ros_node2.py" "DESTINATION" "lib/rrbot_gazebo")
+ament_cmake_symlink_install_programs("/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/rrbot_gazebo" PROGRAMS "src/joint_effort_controller.py" "src/joint_velocity_controller.py" "src/joint_angle_input.py" "src/ros_node.py" "src/ros_node1.py" "src/ros_node2.py" "DESTINATION" "lib/rrbot_gazebo")
+
 # install(FILES "/home/maryammahmood/PID_own_urdf/src/build/rrbot_gazebo/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/rrbot_gazebo" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
 ament_cmake_symlink_install_files("/home/maryammahmood/PID_own_urdf/src/rrbot_simulation_files/rrbot_gazebo" FILES "/home/maryammahmood/PID_own_urdf/src/build/rrbot_gazebo/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/rrbot_gazebo" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
 

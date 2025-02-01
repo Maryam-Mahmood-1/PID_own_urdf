@@ -8,6 +8,12 @@
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/worlds/rrbot.world
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/config/controllers.yaml
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/config/gazebo_controllers.yaml
+/home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/joint_effort_controller.py
+/home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/joint_velocity_controller.py
+/home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/joint_angle_input.py
+/home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/ros_node.py
+/home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/ros_node1.py
+/home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/lib/rrbot_gazebo/ros_node2.py
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/ament_index/resource_index/package_run_dependencies/rrbot_gazebo
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/ament_index/resource_index/parent_prefix_path/rrbot_gazebo
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_gazebo/share/rrbot_gazebo/environment/ament_prefix_path.sh

@@ -15,6 +15,7 @@
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/meshes/gear2_link.STL
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/meshes/link_6.STL
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/launch/view_robot.launch.py
+/home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/urdf/ourrbot.urdf.xacro
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/urdf/rrbot.urdf.xacro
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/rrbot_description/environment/rrbot_description.dsv
 /home/maryammahmood/PID_own_urdf/src/install/rrbot_description/share/ament_index/resource_index/package_run_dependencies/rrbot_description
