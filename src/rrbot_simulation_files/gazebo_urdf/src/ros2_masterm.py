@@ -147,11 +147,11 @@ class MotorController(Node):
             self.get_logger().info(f"Initial motor positions response: {response}")
 
             # Check if the response starts with "<P", contains "V", and ends with ">"
-            if response.startswith("<P") and "V" in response and response.endswith(">"):
+            if response.startswith("<P") and response.endswith(">"):
                 parsed_data = self.parse_arduino_response(response)
 
                 # Check for None values in positions or speeds, indicating errors
-                if any(p is None for p in parsed_data["positions"]) or any(s is None for s in parsed_data["speeds"]):
+                if any(p is None for p in parsed_data["positions"]):
                     self.get_logger().warn("Error reading motor positions or speeds, retrying...")
                     time.sleep(0.001)  # Optional delay before retrying
                     continue  # Retry reading the positions and speeds, resend the command
@@ -468,7 +468,7 @@ class MotorController(Node):
 
             # Total loop time
             elapsed_time = time.monotonic() - start_time
-            remaining_time = max(0.06 - elapsed_time, 0)  # Ensure positive delay
+            remaining_time = max(0.0834 - elapsed_time, 0)  # Ensure positive delay
 
             self.get_logger().info(f"Total loop execution time: {elapsed_time:.6f} seconds")
             self.get_logger().info(f"Remaining Time to maintain rate: {remaining_time:.6f} seconds")
