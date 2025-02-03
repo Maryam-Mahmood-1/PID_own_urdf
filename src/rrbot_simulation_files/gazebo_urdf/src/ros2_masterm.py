@@ -22,9 +22,9 @@ class MotorController(Node):
         self.initial_angles = [0] * self.num_joints  # example initialization values
 
         # PID parameters
-        self.proportional_gain = [0.6, 0.5, 0.1, 1.5, 2.0, 3.0, 2.0]
+        self.proportional_gain = [0.6, 0.5, 0.1, 1.15, 2.0, 3.0, 2.0]
         #                        [141,   142,   144,  143,  146,   145,   147]
-        self.derivative_gain = [0.003, 0.003, 0.003, 0.002, 0.002, 0.0001, 0.002]
+        self.derivative_gain = [0.003, 0.003, 0.003, 0.001, 0.002, 0.0001, 0.002]
         self.integral_gain = [0.000196, 0.000196, 0.000196, 0.0000, 0.000196, 0.00009, 0.0003]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
@@ -428,6 +428,9 @@ class MotorController(Node):
             self.update_current_positions_and_speeds()
             # ********************************************************************************
             joint_displacements = [current - initial for current, initial in zip(self.current_positions, self.initial_positions)]
+            self.get_logger().info(f"Joint Displacements {joint_displacements}")
+            self.get_logger().info(f"Current Positions {self.current_positions}")
+            self.get_logger().info(f"Initial Positions {self.initial_positions}")
             # Create and populate the message
             joint_displacement_msg = Float64MultiArray()
             joint_displacement_msg.data = [
