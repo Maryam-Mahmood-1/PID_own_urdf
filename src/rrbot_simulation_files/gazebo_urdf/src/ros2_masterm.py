@@ -29,6 +29,7 @@ class MotorController(Node):
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
         self.dt = 0.01
+        self.prev_time = 0.0
         self.prev_error = [0.0] * self.num_joints
         self.prev_speed = [0.0] * self.num_joints
         self.alpha = 0.9
@@ -374,7 +375,9 @@ class MotorController(Node):
     def update_current_positions_and_speeds(self):
         max_retries = 1  # Maximum number of retries
         retries = 0  # Retry counter
-
+        ct = time.time()
+        self.get_logger().info(f"Passed time inbetween reads: {ct- self.prev_time}")
+        self.prev_time = ct
         while retries < max_retries:
             # Send the command to request positions and speeds
             self.serial_port.write(b"rmpv\n")
@@ -468,7 +471,7 @@ class MotorController(Node):
 
             # Total loop time
             elapsed_time = time.monotonic() - start_time
-            remaining_time = max(0.0834 - elapsed_time, 0)  # Ensure positive delay
+            remaining_time = max(0.0933 - elapsed_time, 0)  # Ensure positive delay
 
             self.get_logger().info(f"Total loop execution time: {elapsed_time:.6f} seconds")
             self.get_logger().info(f"Remaining Time to maintain rate: {remaining_time:.6f} seconds")
