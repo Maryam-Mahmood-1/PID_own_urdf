@@ -370,7 +370,7 @@ class MotorController(Node):
 
 
     def update_current_positions_and_speeds(self):
-        max_retries = 3  # Maximum number of retries
+        max_retries = 1  # Maximum number of retries
         retries = 0  # Retry counter
 
         while retries < max_retries:
@@ -389,7 +389,7 @@ class MotorController(Node):
                 if any(p is None for p in parsed_data["positions"]) or any(s is None for s in parsed_data["speeds"]):
                     self.get_logger().warn("Error reading motor positions or speeds, retrying...")
                     retries += 1  # Increment retry counter
-                    time.sleep(0.001)  # Optional delay before retrying
+                    time.sleep(0.0001)  # Optional delay before retrying
                     continue  # Retry reading the positions and speeds
 
                 # If valid data is found, update positions and speeds
@@ -412,7 +412,7 @@ class MotorController(Node):
             # If response is invalid, increment retries and log a warning
             self.get_logger().warn("Invalid response, retrying...")
             retries += 1
-            time.sleep(0.01)  # Optional delay before retrying
+            time.sleep(0.00001)  # Optional delay before retrying
 
         # If retries are exhausted, stop all motors
         self.get_logger().error("Failed to read motor positions and speeds after maximum retries. Stopping all motors.")
@@ -423,36 +423,57 @@ class MotorController(Node):
 
 
 
+
+
     def timer_callback(self):
         if not self.poweroff:
-            self.update_current_positions_and_speeds()
-            # ********************************************************************************
-            joint_displacements = [current - initial for current, initial in zip(self.current_positions, self.initial_positions)]
-            # Create and populate the message
-            joint_displacement_msg = Float64MultiArray()
-            joint_displacement_msg.data = [
-                float(current - initial)
-                for current, initial in zip(self.current_positions, self.initial_positions)
-            ]
+            start_time = time.monotonic()  # Start time for total loop execution
 
-            # Publish the message
+            # Step 1: Read motor positions and speeds
+            t1 = time.monotonic()
+            self.update_current_positions_and_speeds()
+            t1_elapsed = time.monotonic() - t1
+            self.get_logger().info(f"Time for updating motor positions and speeds: {t1_elapsed:.6f} seconds")
+
+            # Step 2: Compute joint displacements & publish
+            t2 = time.monotonic()
+            joint_displacements = [current - initial for current, initial in zip(self.current_positions, self.initial_positions)]
+
+            # Create and publish joint displacement message
+            joint_displacement_msg = Float64MultiArray()
+            joint_displacement_msg.data = [float(d) for d in joint_displacements]
             self.rel_value_publisher_.publish(joint_displacement_msg)
 
-            # Create and populate the message with zeros
+            # Publish original joint values (all zeros)
             joint_org_msg = Float64MultiArray()
-            joint_org_msg.data = [0.0] * self.num_joints  # Assuming self.num_joints defines the number of joints
-
-            # Publish the message
+            joint_org_msg.data = [0.0] * self.num_joints
             self.org_value_publisher_.publish(joint_org_msg)
 
-            self.get_logger().info(f"Joint displacements: {joint_displacements}")
-            # ********************************************************************************
+            t2_elapsed = time.monotonic() - t2
+            self.get_logger().info(f"Time for displacement calculation & publishing: {t2_elapsed:.6f} seconds")
 
-            self.get_logger().info(f"Done reading the current motors' state")
+            # Step 3: Compute PID speeds
+            t3 = time.monotonic()
             self.calculate_pid_speeds()
-            self.get_logger().info(f"Done calculating the required motors' speeds")
+            t3_elapsed = time.monotonic() - t3
+            self.get_logger().info(f"Time for PID calculation: {t3_elapsed:.6f} seconds")
+
+            # Step 4: Send motor commands
+            t4 = time.monotonic()
             self.write_motor_positions_with_pid_speeds()
-    
+            t4_elapsed = time.monotonic() - t4
+            self.get_logger().info(f"Time for sending motor commands: {t4_elapsed:.6f} seconds")
+
+            # Total loop time
+            elapsed_time = time.monotonic() - start_time
+            remaining_time = max(0.06 - elapsed_time, 0)  # Ensure positive delay
+
+            self.get_logger().info(f"Total loop execution time: {elapsed_time:.6f} seconds")
+            self.get_logger().info(f"Remaining Time to maintain rate: {remaining_time:.6f} seconds")
+
+            # Maintain consistent loop frequency
+            time.sleep(remaining_time)
+
     def voltage_callback(self):
         self.read_motor_voltage()
 
