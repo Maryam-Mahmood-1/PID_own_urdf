@@ -15,17 +15,16 @@ class MotorController(Node):
         self.initial_positions = [0] * self.num_joints
         self.current_positions = [0] * self.num_joints
         self.target_positions = [0] * self.num_joints
-        self.ref_positions = [0] * self.num_joints
         self.offset_positions = [0] * self.num_joints
         self.required_speeds = [0] * self.num_joints
         self.current_speeds = [0] * self.num_joints
-        self.position_constraints = [(-100, 100)] * self.num_joints  # example constraints in degrees
+        self.position_constraints = [(-120, 120)] * self.num_joints  # example constraints in degrees
         self.initial_angles = [0] * self.num_joints  # example initialization values
 
         # PID parameters
-        self.proportional_gain = [0.6, 0.5, 0.1, 1.15, 2.0, 3.0, 2.0]
+        self.proportional_gain = [0.6, 0.5, 0.1, 3.0, 2.0, 3.0, 2.0]
         #                        [141,   142,   144,  143,  146,   145,   147]
-        self.derivative_gain = [0.003, 0.003, 0.003, 0.001, 0.002, 0.0001, 0.002]
+        self.derivative_gain = [0.003, 0.003, 0.003, 0.005, 0.002, 0.0001, 0.002]
         self.integral_gain = [0.000196, 0.000196, 0.000196, 0.0000, 0.000196, 0.00009, 0.0003]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
@@ -41,7 +40,6 @@ class MotorController(Node):
         self.joint_reached = [False] * self.num_joints
         self.acceptable_error = 0.0001
         self.poweroff = True
-        self.angles_recv = False
         self.calc_vel_rad = [0] * self.num_joints
         self.current_calc_speed = [0] * self.num_joints
 
@@ -161,7 +159,6 @@ class MotorController(Node):
                 # If valid data is found, update positions and speeds
                 self.initial_positions = parsed_data["positions"]
                 self.target_positions = parsed_data["positions"]
-                self.ref_positions = parsed_data["positions"]
                 self.current_positions = parsed_data["positions"]
                 self.current_speeds = parsed_data["speeds"]
 
@@ -173,7 +170,7 @@ class MotorController(Node):
 
     def write_motor_positions_with_pid_speeds(self):
         # Prepare the command to write motor positions and speeds
-        command = f"wmpv<P{' '.join(map(str, self.ref_positions))} V{' '.join(map(str, self.apply_joint_velocities))}>\n"
+        command = f"wmpv<P{' '.join(map(str, self.target_positions))} V{' '.join(map(str, self.apply_joint_velocities))}>\n"
         self.serial_port.write(command.encode())
         self.get_logger().info(f"Writing motor positions with PID speeds: {command.strip()}")
         start_time = time.time()
@@ -278,7 +275,6 @@ class MotorController(Node):
 
 
     def motor_angles_callback(self, msg):
-        self.angles_recv = True
         # Convert the data to a list of int32_t
         #motor_recv_angles = [int(angle) for angle in msg.data]
         motor_recv_angles = [
@@ -291,7 +287,6 @@ class MotorController(Node):
 
 
         # Log the converted target positions
-        self.get_logger().info(f"Received target positions: {motor_recv_angles}")
         self.get_logger().info(f"Converted target positions: {self.target_positions}")
         self.lpfw_dr_f = 0
 
@@ -301,10 +296,10 @@ class MotorController(Node):
 
     def calculate_pid_speeds(self):
         m_lpfw = 1 - ((1 - self.lpfw)*(self.lpfw_dr**self.lpfw_dr_f))
-        error = [float(self.ref_positions[i]) - float(self.current_positions[i]) for i in range(self.num_joints)]
+        error = [float(self.target_positions[i]) - float(self.current_positions[i]) for i in range(self.num_joints)]
         self.get_logger().info(f"Error = {error}")
 
-        error_r = [(float(self.ref_positions[i]) - float(self.current_positions[i]))/57.29 for i in range(self.num_joints)]
+        error_r = [(float(self.target_positions[i]) - float(self.current_positions[i]))/57.29 for i in range(self.num_joints)]
         error_derivative = [(error_r[i] - self.prev_error[i]) / self.dt for i in range(self.num_joints)]
         self.prev_error = error_r
         
@@ -351,7 +346,7 @@ class MotorController(Node):
 
         # Publish reference joint states (target positions)
         reference_joint_states = Float64MultiArray()
-        reference_joint_states.data = [float(v) for v in self.ref_positions]  # Convert positions to float
+        reference_joint_states.data = [float(v) for v in self.target_positions]  # Convert positions to float
         self.reference_value_publisher_.publish(reference_joint_states)
 
         # Publish current joint position and velocity (both positions and velocities need to be floats)
@@ -368,7 +363,7 @@ class MotorController(Node):
         
         self.get_logger().info(f"Publishing Current State (Position, Velocity): {current_state_message.data}")
         self.get_logger().info(f"Publishing Integral Error: {self.integral_error_r}")
-        self.get_logger().info(f"Publishing Derivative Error: {[d * (s * 57.29) for d, s in zip(self.derivative_gain, -self.prev_speed)]}")
+        self.get_logger().info(f"Publishing Derivative Error: {[d * (s * 57.29) for d, s in zip(self.derivative_gain, error_derivative)]}")
         self.get_logger().info(f"Joint Reached Status: {self.joint_reached}")
         self.get_logger().info(f"Error: {error}")
 
@@ -432,32 +427,34 @@ class MotorController(Node):
         if not self.poweroff:
             self.update_current_positions_and_speeds()
             # ********************************************************************************
-            #joint_displacements = [current - initial for current, initial in zip(self.current_positions, self.initial_positions)]
-            #self.get_logger().info(f"Joint Displacements {joint_displacements}")
+            joint_displacements = [current - initial for current, initial in zip(self.current_positions, self.initial_positions)]
+            self.get_logger().info(f"Joint Displacements {joint_displacements}")
             self.get_logger().info(f"Current Positions {self.current_positions}")
             self.get_logger().info(f"Initial Positions {self.initial_positions}")
-            self.get_logger().info(f"Reference Positions {self.ref_positions}")
-            self.get_logger().info(f"Target Positions {self.target_positions}")
             # Create and populate the message
-            
+            joint_displacement_msg = Float64MultiArray()
+            joint_displacement_msg.data = [
+                float(current - initial)
+                for current, initial in zip(self.current_positions, self.initial_positions)
+            ]
+
+            # Publish the message
+            self.rel_value_publisher_.publish(joint_displacement_msg)
+
+            # Create and populate the message with zeros
+            joint_org_msg = Float64MultiArray()
+            joint_org_msg.data = [0.0] * self.num_joints  # Assuming self.num_joints defines the number of joints
+
+            # Publish the message
+            self.org_value_publisher_.publish(joint_org_msg)
+
+            self.get_logger().info(f"Joint displacements: {joint_displacements}")
+            # ********************************************************************************
 
             self.get_logger().info(f"Done reading the current motors' state")
             self.calculate_pid_speeds()
             self.get_logger().info(f"Done calculating the required motors' speeds")
             self.write_motor_positions_with_pid_speeds()
-    
-    def ramp_target_callback(self):
-        if self.angles_recv == True:
-            self.get_logger().info(f"Target positions in ramp: {self.target_positions}")
-            self.get_logger().info(f"Ref positions in ramp: {self.ref_positions}")
-            for i in range(self.num_joints):
-                if self.ref_positions[i] < self.target_positions[i]:
-                    self.ref_positions[i] = min(self.ref_positions[i] + 10, self.target_positions[i])
-                elif self.ref_positions[i] > self.target_positions[i]:
-                    self.get_logger().info(f"I am here MM")
-                    self.ref_positions[i] = max(self.ref_positions[i] - 10, self.target_positions[i])
-
-        self.get_logger().info(f"Ramping target positions: {self.ref_positions}")
     
     def voltage_callback(self):
         self.read_motor_voltage()
@@ -466,10 +463,6 @@ class MotorController(Node):
     def start_control_loop(self):
         # Timer for periodic updates (e.g., 1000 Hz)
         self.timer = self.create_timer(0.001, self.timer_callback)
-
-    def ramp_tracker(self):
-        # Timer for periodic updates (e.g., 1000 Hz)
-        self.timer = self.create_timer(0.001, self.ramp_target_callback)
 
     def voltage_checker(self):
         # Timer for periodic updates (e.g., 10 Hz)
@@ -482,7 +475,6 @@ def main(args=None):
         motor_controller = MotorController()
         motor_controller.start_control_loop()
         motor_controller.voltage_checker()
-        motor_controller.ramp_tracker()
 
         rclpy.spin(motor_controller)
     except Exception as e:
