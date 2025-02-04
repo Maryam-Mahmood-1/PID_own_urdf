@@ -174,41 +174,58 @@ class MotorController(Node):
 
 
     def write_motor_positions_with_pid_speeds(self):
+        max_retries = 3  # Maximum number of retries
+        retries = 0  # Retry counter
+        while max_retries > retries:
         # Prepare the command to write motor positions and speeds
-        command = f"wmpv<V{' '.join(map(str, self.apply_joint_velocities))}>\n"
-        self.serial_port.write(command.encode())
-        self.get_logger().info(f"Writing motor positions with PID speeds: {command.strip()}")
-        start_time = time.time()
+            s_time = time.time()
+            command = f"wmpv<V{' '.join(map(str, self.apply_joint_velocities))}>\n"
+            self.serial_port.write(command.encode())
+            self.get_logger().info(f"Writing motor positions with PID speeds: {command.strip()}")
+            start_time = time.time()
         
-        while True:
+        
             # Wait for the expected response: "<Written>" or an error message
             response = self.serial_port.readline().decode().strip()
             self.get_logger().info(f"Write motor positions with PID speeds response: {response}")
             self.get_logger().info(f"Response type: {type(response)}")
 
-            if response == "<Written>":
-                elapsed_time = time.time() - start_time
-                self.get_logger().info(f"Time spent waiting for '<Written>': {elapsed_time:.6f} seconds")
-                self.get_logger().info("Successfully wrote motor positions and speeds.")
-                break  # Exit the loop once the correct response is received
+            if response.startswith("<P") and response.endswith(">"):
+                parsed_data = self.parse_arduino_msg(response)  # Parse positions (no speeds)
 
-            # Handle motor-specific error response
-            elif response.startswith("Err") and response.endswith("-"):
-                try:
-                    motor_index = int(response[3:-1])  # Extract motor index from the error message
-                    self.get_logger().error(f"Motor {motor_index} reported an error: {response}")
-                    
-                    # Placeholder for handling specific motor errors
-                    # Add your functionality here (e.g., retry logic, logging, stopping the motor, etc.)
-                    self.stop_motor(motor_index)
-                except ValueError:
-                    self.get_logger().error(f"Failed to parse motor index from response: {response}")
-            
-            # If unexpected response, log it and retry
-            elif response:
-                self.get_logger().warn(f"Unexpected response: {response}, retrying...")
-            
-            time.sleep(0.0001)  # Optional small delay to prevent busy-waiting
+                # Check for None values in positions, indicating errors
+                if any(p is None for p in parsed_data["positions"]):
+                    self.get_logger().warn("Error reading motor positions, retrying...")
+                    retries += 1  # Increment retry counter
+                    time.sleep(0.001)  # Optional delay before retrying
+                    continue  # Retry reading the positions
+
+                # If valid data is found, update positions
+                f_time = time.time()
+                m_alpha = 1 - ((1 - self.lpfw) * (self.lpfw_dr ** self.lpfw_dr_f))  # Apply filtering
+
+                for i in range(self.num_joints):
+                    self.current_positions[i] = (
+                        m_alpha * parsed_data["positions"][i] + (1 - m_alpha) * self.current_positions[i]
+                    )
+
+                self.get_logger().info(f"Passed time in reading positions: {f_time - s_time:.6f} seconds")
+                self.get_logger().info("Successfully read current motor positions.")
+                return  # Exit the method on success
+
+            # If response is invalid, increment retries and log a warning
+            self.get_logger().warn("Invalid response, retrying...")
+            retries += 1
+            time.sleep(0.01)  # Optional delay before retrying
+
+        # If retries are exhausted, stop all motors
+        self.get_logger().error("Failed to read motor positions after maximum retries. Stopping all motors.")
+        for motor_index in range(1, len(self.target_positions) + 1):  # Assuming motors are indexed 1 to n
+            stop_command = f"stop{motor_index}\n"
+            self.serial_port.write(stop_command.encode())
+            self.get_logger().info(f"Sent stop command to motor {motor_index}")
+
+
 
     def stop_motor(self, motor_index):
         """
@@ -462,10 +479,7 @@ class MotorController(Node):
 
     def timer_callback(self):
         if not self.poweroff:
-            t1 =time.time()
-            self.update_current_positions_and_speeds()
-            t2 = time.time()
-            self.get_logger().info(f"Time spent updating current positions and speeds: {t2 - t1:.6f} seconds")
+            
             # ********************************************************************************
             joint_displacements = [current - initial for current, initial in zip(self.current_positions, self.initial_positions)]
             self.get_logger().info(f"Joint Displacements {joint_displacements}")
