@@ -22,10 +22,10 @@ class MotorController(Node):
         self.initial_angles = [0] * self.num_joints  # example initialization values
 
         # PID parameters
-        self.proportional_gain = [0.6, 0.5, 0.1, 3.0, 2.0, 3.0, 2.0]
+        self.proportional_gain = [0.6, 0.5, 2.0, 3.0, 2.0, 3.0, 2.0]
         #                        [141,   142,   144,  143,  146,   145,   147]
-        self.derivative_gain = [0.003, 0.003, 0.003, 0.005, 0.002, 0.0001, 0.002]
-        self.integral_gain = [0.000196, 0.000196, 0.000196, 0.0000, 0.000196, 0.00009, 0.0003]
+        self.derivative_gain = [0.003, 0.003, 0.000, 0.005, 0.002, 0.0001, 0.002]
+        self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.000196, 0.00009, 0.0003]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
         self.dt = 0.01
@@ -375,6 +375,7 @@ class MotorController(Node):
 
         while retries < max_retries:
             # Send the command to request positions and speeds
+            s_time = time.time()
             self.serial_port.write(b"rmpv\n")
             self.get_logger().info("Requesting current motor positions and speeds...")
 
@@ -395,11 +396,13 @@ class MotorController(Node):
                 # If valid data is found, update positions and speeds
                 #alpha = 0.9  # Smoothing factor (adjust as needed)
                 #self.current_positions = alpha * parsed_data["positions"] + (1 - alpha) * self.current_positions
+                f_time = time.time()
                 m_alpha = 1 - ((1 - self.lpfw) * (self.lpfw_dr ** self.lpfw_dr_f))
                 for i in range(self.num_joints):
                     self.current_positions[i] = (
                         m_alpha * parsed_data["positions"][i] + (1 - m_alpha) * self.current_positions[i]
                     )
+                self.get_logger().info(f"Passed time in reading positions: {f_time - s_time:.6f} seconds")
 
                 #self.current_positions = parsed_data["positions"]
                 #self.current_speeds = parsed_data["speeds"]
@@ -425,7 +428,10 @@ class MotorController(Node):
 
     def timer_callback(self):
         if not self.poweroff:
+            t1 =time.time()
             self.update_current_positions_and_speeds()
+            t2 = time.time()
+            self.get_logger().info(f"Time spent updating current positions and speeds: {t2 - t1:.6f} seconds")
             # ********************************************************************************
             joint_displacements = [current - initial for current, initial in zip(self.current_positions, self.initial_positions)]
             self.get_logger().info(f"Joint Displacements {joint_displacements}")
@@ -452,9 +458,15 @@ class MotorController(Node):
             # ********************************************************************************
 
             self.get_logger().info(f"Done reading the current motors' state")
+            t3 = time.time()
             self.calculate_pid_speeds()
+            t4 = time.time()    
+            self.get_logger().info(f"Time spent calculating PID speeds: {t4 - t3:.6f} seconds")
             self.get_logger().info(f"Done calculating the required motors' speeds")
+            t4 = time.time()
             self.write_motor_positions_with_pid_speeds()
+            t5 = time.time()    
+            self.get_logger().info(f"Time spent writing motor positions with PID speeds: {t5 - t4:.6f} seconds")
     
     def voltage_callback(self):
         self.read_motor_voltage()
