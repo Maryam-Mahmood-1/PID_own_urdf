@@ -174,7 +174,7 @@ class MotorController(Node):
 
     def write_motor_positions_with_pid_speeds(self):
         # Prepare the command to write motor positions and speeds
-        command = f"wmpv<P{' '.join(map(str, self.target_positions))} V{' '.join(map(str, self.apply_joint_velocities))}>\n"
+        command = f"wmpv<V{' '.join(map(str, self.apply_joint_velocities))}>\n"
         self.serial_port.write(command.encode())
         self.get_logger().info(f"Writing motor positions with PID speeds: {command.strip()}")
         start_time = time.time()
