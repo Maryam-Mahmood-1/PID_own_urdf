@@ -5,6 +5,7 @@ from std_msgs.msg import Float64MultiArray
 import serial
 import time
 import numpy as np
+import copy
 
 class MotorController(Node):
     def __init__(self):
@@ -157,9 +158,12 @@ class MotorController(Node):
                     continue  # Retry reading the positions and speeds, resend the command
 
                 # If valid data is found, update positions and speeds
-                self.initial_positions = parsed_data["positions"]
-                self.target_positions = parsed_data["positions"]
-                self.current_positions = parsed_data["positions"]
+                
+
+                # Ensure deep copies are made to avoid shared references
+                self.initial_positions = copy.deepcopy(parsed_data["positions"])
+                self.target_positions = copy.deepcopy(parsed_data["positions"])
+                self.current_positions = copy.deepcopy(parsed_data["positions"])
                 self.current_speeds = parsed_data["speeds"]
 
                 self.get_logger().info("Successfully read initial motor positions and speeds.")
