@@ -29,7 +29,7 @@ class MotorController(Node):
         self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.0, 0.0, 0.0]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
-        self.dt = 0.005
+        self.dt = 0.05
         self.prev_error = [0.0] * self.num_joints
         self.prev_speed = [0.0] * self.num_joints
         self.alpha = 0.9
@@ -418,6 +418,7 @@ class MotorController(Node):
         
         self.get_logger().info(f"Publishing Current State (Position, Velocity): {current_state_message.data}")
         self.get_logger().info(f"Publishing Integral Error: {self.integral_error_r}")
+        self.get_logger().info(f"Publishing D Error: {[d * (-s) for d, s in zip(self.derivative_gain, self.prev_speed)]}")
         self.get_logger().info(f"Publishing Derivative Error: {[d * (s * 57.29) for d, s in zip(self.derivative_gain, error_derivative)]}")
         self.get_logger().info(f"Joint Reached Status: {self.joint_reached}")
         self.get_logger().info(f"Error: {error}")
