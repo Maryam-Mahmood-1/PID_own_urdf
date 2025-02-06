@@ -26,11 +26,12 @@ class MotorController(Node):
         # PID parameters
         self.proportional_gain = [0.6, 0.5, 2.0, 1.5, 3.0, 3.0, 3.5]
         #                        [141,   142,   144,  143,  146,   145,   147]
-        self.derivative_gain = [0.003, 0.003, 0.000, 0.002, 0.002, 0.002, 0.0015]
+        self.derivative_gain = [0.003, 0.003, 0.000, 0.001, 0.002, 0.002, 0.0015]
         self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.0, 0.0, 0.0]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
         self.dt = 0.06
+        self.prev_PID_time = 0.0
         self.prev_error = [0.0] * self.num_joints
         self.prev_speed = [0.0] * self.num_joints
         self.alpha = 0.9
@@ -76,7 +77,8 @@ class MotorController(Node):
         self.vel_error_d = self.create_publisher(Float64MultiArray, 'speed_error_d', 10)
         self.vel_calc_speed = self.create_publisher(Float64MultiArray, 'speed_sim_vel', 10)
         self.vel_motor_speed = self.create_publisher(Float64MultiArray, 'speed_motor_vel', 10)
-        self.weight_publisher_ = self.create_publisher(Float64MultiArray, 'weight_filter', 10)
+        self.weight_publisher_ = self.create_publisher(Float64, 'weight_filter', 10)
+        self.dt_publisher_ = self.create_publisher(Float64, 'dt_PID', 10)
 
         # Setup sequence
         self.clear_serial_buffer()
@@ -235,12 +237,15 @@ class MotorController(Node):
 
                 self.get_logger().info(f"Passed time in reading positions: {f_time - s_time:.6f} seconds")
                 self.get_logger().info("Successfully read current motor positions.")
+                #self.prev_PID_time = s_time
                 return  # Exit the method on success
 
             # If response is invalid, increment retries and log a warning
             self.get_logger().warn("Invalid response, retrying...")
             retries += 1
             time.sleep(0.00075)  # Optional delay before retrying
+        
+        
 
         # If retries are exhausted, stop all motors
         self.get_logger().error("Failed to read motor positions after maximum retries. Stopping all motors.")
@@ -378,10 +383,16 @@ class MotorController(Node):
         self.write_motor_positions_with_pid_speeds()
 
     def calculate_pid_speeds(self):
+        self.del_t = time.time() - self.prev_PID_time
         self.m_lpfw = 1 - ((1 - self.lpfw)*(self.lpfw_dr**self.lpfw_dr_f))
         msg = Float64()
         msg.data = self.m_lpfw  # Assign the filtered value
         self.weight_publisher_.publish(msg)
+
+        msg = Float64()
+        msg.data = self.del_t  # Assign the filtered value
+        self.weight_publisher_.publish(msg)
+
         error = [float(self.target_positions[i]) - float(self.current_positions[i]) for i in range(self.num_joints)]
         self.get_logger().info(f"Error = {error}")
 
@@ -436,19 +447,20 @@ class MotorController(Node):
                 self.apply_joint_velocities[i] = 0
             
             self.prev_speed[i] = self.apply_joint_velocities[i]
-        self.lpfw_dr_f +=1
+            self.prev_PID_time = time.time()
+        #self.lpfw_dr_f +=1
     
 
         message = Float64MultiArray()
-        message.data = [float(v) for v in self.current_calc_speed]  # Convert velocities to float
+        message.data = [float(v/100) for v in self.current_calc_speed]  # Convert velocities to float
         self.vel_error_d.publish(message)
 
         message = Float64MultiArray()
-        message.data = [float(v) for v in self.current_calc_d_speed]  # Convert velocities to float
+        message.data = [float(v/100) for v in self.current_calc_speed_d_speed]  # Convert velocities to float
         self.vel_calc_speed.publish(message)
 
         message = Float64MultiArray()
-        message.data = [float(v) for v in self.current_calc_dm_speed]  # Convert velocities to float
+        message.data = [float(v/100) for v in self.current_calc_speed_dm_speed]  # Convert velocities to float
         self.vel_motor_speed.publish(message)
 
 
