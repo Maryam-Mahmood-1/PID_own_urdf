@@ -23,9 +23,9 @@ class MotorController(Node):
         self.initial_angles = [0] * self.num_joints  # example initialization values
 
         # PID parameters
-        self.proportional_gain = [0.6, 0.5, 2.0, 3.0, 3.0, 3.0, 3.5]
+        self.proportional_gain = [0.6, 0.5, 2.0, 1.5, 3.0, 3.0, 3.5]
         #                        [141,   142,   144,  143,  146,   145,   147]
-        self.derivative_gain = [0.003, 0.003, 0.000, 0.005, 0.002, 0.002, 0.0015]
+        self.derivative_gain = [0.003, 0.003, 0.000, 0.002, 0.002, 0.002, 0.0015]
         self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.0, 0.0, 0.0]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
@@ -165,7 +165,7 @@ class MotorController(Node):
                 self.initial_positions = copy.deepcopy(parsed_data["positions"])
                 self.target_positions = copy.deepcopy(parsed_data["positions"])
                 self.current_positions = copy.deepcopy(parsed_data["positions"])
-                self.current_speeds = parsed_data["speeds"]
+                self.current_speeds = copy.deepcopy(parsed_data["speeds"])
 
                 self.get_logger().info("Successfully read initial motor positions and speeds.")
                 break  # Exit the loop once data is successfully read
@@ -190,14 +190,25 @@ class MotorController(Node):
             self.get_logger().info(f"Response type: {type(response)}")
 
             if response.startswith("<P") and response.endswith(">"):
-                parsed_data = self.parse_arduino_msg(response)  # Parse positions (no speeds)
+                parsed_data = self.parse_arduino_msg(response)  # Parse positions and speeds
 
-                # Check for None values in positions, indicating errors
-                if any(p is None for p in parsed_data["positions"]):
-                    self.get_logger().warn("Error reading motor positions, retrying...")
-                    retries += 1  # Increment retry counter
-                    time.sleep(0.0001)  # Optional delay before retrying
-                    continue  # Retry reading the positions
+                # Ensure parsed_data contains both positions and speeds
+                if "positions" in parsed_data and "speeds" in parsed_data:
+                    positions = parsed_data["positions"]
+                    speeds = parsed_data["speeds"]
+
+                    # Check for None values in positions, indicating errors
+                    if any(p is None for p in positions):
+                        self.get_logger().warn("Error reading motor positions, retrying...")
+                        retries += 1  # Increment retry counter
+                        time.sleep(0.0001)  # Optional delay before retrying
+                        continue  # Retry reading the positions
+
+                    # If no errors, store the parsed positions and speeds
+                    
+                    self.current_speeds = speeds  # Store speeds if needed for further logic
+                else:
+                    self.get_logger().error("Invalid data received from Arduino")
 
                 # If valid data is found, update positions
                 f_time = time.time()
@@ -267,20 +278,25 @@ class MotorController(Node):
         try:
             response = response.strip('<>')  # Remove angle brackets
 
-            if response.startswith("P"):  # Check if it's a position message
-                parts = response[1:].split()  # Split the values by space
+            if response.startswith("P"):  # Check if it's a position/speed message
+                parts = response[1:].split()  # Split values by space
                 positions = []
+                speeds = []
 
-                for i, value in enumerate(parts):  # Use enumerate to track the index
-                    if value == "Err":
-                        positions.append(None)  # Mark errors as None
-                    elif value == "E":
-                        positions.append(self.current_positions[i])  # Use index i for 'E'
+                for i, value in enumerate(parts):  # Iterate through the parsed parts
+                    if value == "E,E":
+                        positions.append(self.current_positions[i])  # Keep last known position
+                        speeds.append(0)  # Speed unknown
                         self.write_velocities[i] = False
+                    elif value == "Err,Err":
+                        positions.append(None)  # Mark errors as None
+                        speeds.append(0)
                     else:
-                        positions.append(int(value))  # Convert valid numbers
+                        pos, speed = value.split(",")  # Split into position and speed
+                        positions.append(int(pos))  # Convert to integer
+                        speeds.append(int(speed))
 
-                return {"positions": positions}  # No speeds returned
+                return {"positions": positions, "speeds": speeds}
 
             elif response.startswith("a"):  # If it's voltage data
                 return {"voltage": int(response[1:])}
@@ -291,6 +307,7 @@ class MotorController(Node):
             self.get_logger().error(f"Error parsing response: {response} | {e}")
 
         return {}
+
 
 
 
@@ -372,7 +389,7 @@ class MotorController(Node):
             if abs(error[i]) > self.acceptable_error:
                 self.joint_reached[i] = False
                 self.calc_vel_rad[i] = (self.proportional_gain[i] * error_r[i]) \
-                                                + (self.derivative_gain[i] * (-self.prev_speed[i]/57.29)) \
+                                                + (self.derivative_gain[i] * (error_derivative[i])) \
                                                 + (self.integral_gain[i] * self.dt * self.integral_error_r[i])
 
 
