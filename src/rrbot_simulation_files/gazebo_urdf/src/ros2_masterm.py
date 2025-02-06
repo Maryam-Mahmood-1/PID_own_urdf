@@ -29,7 +29,7 @@ class MotorController(Node):
         self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.0, 0.0, 0.0]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
-        self.dt = 0.05
+        self.dt = 0.06
         self.prev_error = [0.0] * self.num_joints
         self.prev_speed = [0.0] * self.num_joints
         self.alpha = 0.9
