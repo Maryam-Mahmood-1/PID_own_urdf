@@ -23,13 +23,13 @@ class MotorController(Node):
         self.initial_angles = [0] * self.num_joints  # example initialization values
 
         # PID parameters
-        self.proportional_gain = [0.6, 0.5, 2.0, 3.0, 2.0, 3.0, 2.0]
+        self.proportional_gain = [0.6, 0.5, 2.0, 3.0, 3.0, 3.0, 3.5]
         #                        [141,   142,   144,  143,  146,   145,   147]
-        self.derivative_gain = [0.003, 0.003, 0.000, 0.005, 0.002, 0.0001, 0.002]
-        self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.000196, 0.00009, 0.0003]
+        self.derivative_gain = [0.003, 0.003, 0.000, 0.005, 0.002, 0.002, 0.0015]
+        self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.0, 0.0, 0.0]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
-        self.dt = 0.01
+        self.dt = 0.005
         self.prev_error = [0.0] * self.num_joints
         self.prev_speed = [0.0] * self.num_joints
         self.alpha = 0.9
@@ -176,14 +176,13 @@ class MotorController(Node):
     def write_motor_positions_with_pid_speeds(self):
         max_retries = 3  # Maximum number of retries
         retries = 0  # Retry counter
-        while max_retries > retries:
+        s_time = time.time()
+        command = f"wmpv<V{' '.join(map(str, self.apply_joint_velocities))}>\n"
+        self.serial_port.write(command.encode())
+        self.get_logger().info(f"Writing motor positions with PID speeds: {command.strip()}")
+        start_time = time.time()
+        while True:
         # Prepare the command to write motor positions and speeds
-            s_time = time.time()
-            command = f"wmpv<V{' '.join(map(str, self.apply_joint_velocities))}>\n"
-            self.serial_port.write(command.encode())
-            self.get_logger().info(f"Writing motor positions with PID speeds: {command.strip()}")
-            start_time = time.time()
-        
         
             # Wait for the expected response: "<Written>" or an error message
             response = self.serial_port.readline().decode().strip()
@@ -197,7 +196,7 @@ class MotorController(Node):
                 if any(p is None for p in parsed_data["positions"]):
                     self.get_logger().warn("Error reading motor positions, retrying...")
                     retries += 1  # Increment retry counter
-                    time.sleep(0.001)  # Optional delay before retrying
+                    time.sleep(0.0001)  # Optional delay before retrying
                     continue  # Retry reading the positions
 
                 # If valid data is found, update positions
@@ -216,7 +215,7 @@ class MotorController(Node):
             # If response is invalid, increment retries and log a warning
             self.get_logger().warn("Invalid response, retrying...")
             retries += 1
-            time.sleep(0.01)  # Optional delay before retrying
+            time.sleep(0.00075)  # Optional delay before retrying
 
         # If retries are exhausted, stop all motors
         self.get_logger().error("Failed to read motor positions after maximum retries. Stopping all motors.")
