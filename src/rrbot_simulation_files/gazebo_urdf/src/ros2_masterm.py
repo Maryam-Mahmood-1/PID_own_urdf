@@ -413,7 +413,7 @@ class MotorController(Node):
 
         # Ensure that apply_joint_velocities are floats before publishing
         message = Float64MultiArray()
-        message.data = [float(v) for v in self.apply_joint_velocities]  # Convert velocities to float
+        message.data = [float(v/100) for v in self.apply_joint_velocities]  # Convert velocities to float
         self.velocities_publisher_.publish(message)
 
         # Publish reference joint states (target positions)
