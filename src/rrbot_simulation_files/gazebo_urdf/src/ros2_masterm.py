@@ -15,6 +15,7 @@ class MotorController(Node):
         self.num_joints = 7
         self.initial_positions = [0] * self.num_joints
         self.current_positions = [0] * self.num_joints
+        self.current_positions_f = [0] * self.num_joints
         self.target_positions = [0] * self.num_joints
         self.offset_positions = [0] * self.num_joints
         self.required_speeds = [0] * self.num_joints
@@ -24,19 +25,19 @@ class MotorController(Node):
         self.initial_angles = [0] * self.num_joints  # example initialization values
 
         # PID parameters
-        self.proportional_gain = [0.6, 0.5, 2.0, 1.5, 3.0, 3.0, 3.5]
+        self.proportional_gain = [0.6, 0.5, 2.0, 1.8, 3.0, 3.0, 3.5]
         #                        [141,   142,   144,  143,  146,   145,   147]
         self.derivative_gain = [0.003, 0.003, 0.000, 0.001, 0.002, 0.002, 0.0015]
         self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.0, 0.0, 0.0]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
-        self.dt = 0.06
+        self.dt = 0.05
         self.prev_PID_time = 0.0
         self.prev_error = [0.0] * self.num_joints
         self.prev_speed = [0.0] * self.num_joints
-        self.alpha = 0.9
-        self.lpfw = 0.5
-        self.m_lpfw = 0.5
+        self.alpha = 0.6
+        self.lpfw = 0.2
+        self.m_lpfw = 0.4
         self.lpfw_dr = 0.87
         self.lpfw_dr_f = 0
         self.i_clamp = [600] * self.num_joints  # Clamp integral errors to a fixed range
@@ -51,6 +52,7 @@ class MotorController(Node):
         self.current_calc_speed = [0] * self.num_joints
         self.current_calc_speed_d_speed = [0] * self.num_joints
         self.current_calc_speed_dm_speed = [0] * self.num_joints
+        self.del_t = 0.0
 
         # Serial communication setup
         self.serial_port = serial.Serial('/dev/ttyUSB0', baudrate=115200, timeout=1)
@@ -71,6 +73,7 @@ class MotorController(Node):
         self.rel_value_publisher_ = self.create_publisher(Float64MultiArray, 'rel_joint_states', 10)
         self.org_value_publisher_ = self.create_publisher(Float64MultiArray, 'org_joint_states', 10)
         self.current_state_publisher_ = self.create_publisher(Float64MultiArray, 'current_joint_states', 10)
+        self.current_pos_publisher_ = self.create_publisher(Float64MultiArray, 'current_pos_states', 10)
         self.D_error_publisher_ = self.create_publisher(Float64MultiArray, 'd_error', 10)
         self.Derivative_error_publisher_ = self.create_publisher(Float64MultiArray, 'derivative_error', 10)
         self.Derivativem_error_publisher_ = self.create_publisher(Float64MultiArray, 'mderivative_error', 10)
@@ -231,9 +234,12 @@ class MotorController(Node):
                 m_alpha = 1 - ((1 - self.lpfw) * (self.lpfw_dr ** self.lpfw_dr_f))  # Apply filtering
 
                 for i in range(self.num_joints):
-                    self.current_positions[i] = (
-                        m_alpha * parsed_data["positions"][i] + (1 - m_alpha) * self.current_positions[i]
-                    )
+                    if ~(abs(self.current_positions[i] - parsed_data["positions"][i]) > 5.0):
+                        self.current_positions[i] = (
+                            m_alpha * parsed_data["positions"][i] + (1 - m_alpha) * self.current_positions[i]
+                        )
+                    self.current_positions_f[i] = parsed_data["positions"][i]
+                    
 
                 self.get_logger().info(f"Passed time in reading positions: {f_time - s_time:.6f} seconds")
                 self.get_logger().info("Successfully read current motor positions.")
@@ -391,7 +397,7 @@ class MotorController(Node):
 
         msg = Float64()
         msg.data = self.del_t  # Assign the filtered value
-        self.weight_publisher_.publish(msg)
+        self.dt_publisher_.publish(msg)
 
         error = [float(self.target_positions[i]) - float(self.current_positions[i]) for i in range(self.num_joints)]
         self.get_logger().info(f"Error = {error}")
@@ -414,6 +420,7 @@ class MotorController(Node):
 
         # Calculate velocities (instead of efforts)
         for i in range(self.num_joints):
+            self.prev_speed[i] = self.apply_joint_velocities[i]/100
             if abs(error[i]) > self.acceptable_error:
                 self.joint_reached[i] = False
                 self.calc_vel_rad[i] = (self.proportional_gain[i] * error_r[i]) \
@@ -439,14 +446,14 @@ class MotorController(Node):
                 self.current_calc_speed_d_speed[i] = int((np.clip(self.calc_vel_rad_with_speed[i]*57.29, -60, 60))*100)
                 self.current_calc_speed_dm_speed[i] = int((np.clip(self.calc_vel_rad_with_motor_speed[i]*57.29, -60, 60))*100)
                 if self.write_velocities[i] == True:
-                    self.apply_joint_velocities[i] = int(self.m_lpfw * self.current_calc_speed[i] + (1 - self.m_lpfw) * self.prev_speed[i])
+                    self.apply_joint_velocities[i] = int(self.m_lpfw * self.current_calc_speed_d_speed[i] + (1 - self.m_lpfw) * self.prev_speed[i])
                 else:
                     self.apply_joint_velocities[i] = 0
             else:
                 self.joint_reached[i] = True
                 self.apply_joint_velocities[i] = 0
             
-            self.prev_speed[i] = self.apply_joint_velocities[i]
+            
             self.prev_PID_time = time.time()
         #self.lpfw_dr_f +=1
     
@@ -479,6 +486,10 @@ class MotorController(Node):
         current_state_message = Float64MultiArray()
         current_state_message.data = [float(p) for p in self.current_positions] + [float(v) for v in self.current_speeds]  # Convert both positions and velocities
         self.current_state_publisher_.publish(current_state_message)
+
+        current_pos_message = Float64MultiArray()
+        current_pos_message.data = [float(p) for p in self.current_positions_f]  # Convert both positions and velocities
+        self.current_pos_publisher_.publish(current_pos_message)
 
         scaled_joint_velocities = [v / 100 for v in self.apply_joint_velocities]
         scaled_calc_speed = [v / 100 for v in self.current_calc_speed]
