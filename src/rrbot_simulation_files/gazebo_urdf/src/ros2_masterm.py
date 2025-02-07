@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Float64MultiArray, Float64
 import serial
 import time
 import numpy as np
+import copy
 
 class MotorController(Node):
     def __init__(self):
@@ -14,35 +15,46 @@ class MotorController(Node):
         self.num_joints = 7
         self.initial_positions = [0] * self.num_joints
         self.current_positions = [0] * self.num_joints
+        self.current_positions_f = [0] * self.num_joints
         self.target_positions = [0] * self.num_joints
         self.offset_positions = [0] * self.num_joints
         self.required_speeds = [0] * self.num_joints
-        self.current_speeds = [0] * self.num_joints
-        self.position_constraints = [(-100, 100)] * self.num_joints  # example constraints in degrees
+        self.current_speeds = [0] * self.num_joints 
+        self.prev_motor_speeds = [0] * self.num_joints
+        self.position_constraints = [(-120, 120)] * self.num_joints  # example constraints in degrees
         self.initial_angles = [0] * self.num_joints  # example initialization values
 
         # PID parameters
-        self.proportional_gain = [0.6, 0.5, 0.1, 1.5, 2.0, 3.0, 2.0]
+        self.proportional_gain = [0.6, 0.5, 2.0, 1.8, 3.0, 3.0, 3.5]
         #                        [141,   142,   144,  143,  146,   145,   147]
-        self.derivative_gain = [0.003, 0.003, 0.003, 0.002, 0.002, 0.0001, 0.002]
-        self.integral_gain = [0.000196, 0.000196, 0.000196, 0.0000, 0.000196, 0.00009, 0.0003]
+        self.derivative_gain = [0.003, 0.003, 0.000, 0.001, 0.002, 0.002, 0.0015]
+        self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.0, 0.0, 0.0]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
-        self.dt = 0.01
-        self.prev_time = 0.0
+
+        self.dt = 0.05
+        self.prev_PID_time = 0.0
+
         self.prev_error = [0.0] * self.num_joints
         self.prev_speed = [0.0] * self.num_joints
-        self.alpha = 0.9
-        self.lpfw = 0.5
+        self.alpha = 0.6
+        self.lpfw = 0.2
+        self.m_lpfw = 0.4
         self.lpfw_dr = 0.87
         self.lpfw_dr_f = 0
         self.i_clamp = [600] * self.num_joints  # Clamp integral errors to a fixed range
         self.apply_joint_velocities = [0] * self.num_joints
+        self.write_velocities = [True] * self.num_joints
         self.joint_reached = [False] * self.num_joints
         self.acceptable_error = 0.0001
         self.poweroff = True
         self.calc_vel_rad = [0] * self.num_joints
+        self.calc_vel_rad_with_speed = [0] * self.num_joints
+        self.calc_vel_rad_with_motor_speed = [0] * self.num_joints
         self.current_calc_speed = [0] * self.num_joints
+        self.current_calc_speed_d_speed = [0] * self.num_joints
+        self.current_calc_speed_dm_speed = [0] * self.num_joints
+        self.del_t = 0.0
 
         # Serial communication setup
         self.serial_port = serial.Serial('/dev/ttyUSB0', baudrate=115200, timeout=1)
@@ -63,6 +75,15 @@ class MotorController(Node):
         self.rel_value_publisher_ = self.create_publisher(Float64MultiArray, 'rel_joint_states', 10)
         self.org_value_publisher_ = self.create_publisher(Float64MultiArray, 'org_joint_states', 10)
         self.current_state_publisher_ = self.create_publisher(Float64MultiArray, 'current_joint_states', 10)
+        self.current_pos_publisher_ = self.create_publisher(Float64MultiArray, 'current_pos_states', 10)
+        self.D_error_publisher_ = self.create_publisher(Float64MultiArray, 'd_error', 10)
+        self.Derivative_error_publisher_ = self.create_publisher(Float64MultiArray, 'derivative_error', 10)
+        self.Derivativem_error_publisher_ = self.create_publisher(Float64MultiArray, 'mderivative_error', 10)
+        self.vel_error_d = self.create_publisher(Float64MultiArray, 'speed_error_d', 10)
+        self.vel_calc_speed = self.create_publisher(Float64MultiArray, 'speed_sim_vel', 10)
+        self.vel_motor_speed = self.create_publisher(Float64MultiArray, 'speed_motor_vel', 10)
+        self.weight_publisher_ = self.create_publisher(Float64, 'weight_filter', 10)
+        self.dt_publisher_ = self.create_publisher(Float64, 'dt_PID', 10)
 
         # Setup sequence
         self.clear_serial_buffer()
@@ -158,9 +179,13 @@ class MotorController(Node):
                     continue  # Retry reading the positions and speeds, resend the command
 
                 # If valid data is found, update positions and speeds
-                self.initial_positions = parsed_data["positions"]
-                self.target_positions = parsed_data["positions"]
-                self.current_positions = parsed_data["positions"]
+
+
+                # Ensure deep copies are made to avoid shared references
+                self.initial_positions = copy.deepcopy(parsed_data["positions"])
+                self.target_positions = copy.deepcopy(parsed_data["positions"])
+                self.current_positions = copy.deepcopy(parsed_data["positions"])
+                self.current_speeds = copy.deepcopy(parsed_data["speeds"])
 
                 self.get_logger().info("Successfully read initial motor positions and speeds.")
                 break  # Exit the loop once data is successfully read
@@ -169,41 +194,75 @@ class MotorController(Node):
 
 
     def write_motor_positions_with_pid_speeds(self):
-        # Prepare the command to write motor positions and speeds
-        command = f"wmpv<P{' '.join(map(str, self.target_positions))} V{' '.join(map(str, self.apply_joint_velocities))}>\n"
+        max_retries = 3  # Maximum number of retries
+        retries = 0  # Retry counter
+        self.prev_motor_speeds = self.current_speeds
+        s_time = time.time()
+        command = f"wmpv<V{' '.join(map(str, self.apply_joint_velocities))}>\n"
         self.serial_port.write(command.encode())
         self.get_logger().info(f"Writing motor positions with PID speeds: {command.strip()}")
         start_time = time.time()
-        
         while True:
+        # Prepare the command to write motor positions and speeds
+        
             # Wait for the expected response: "<Written>" or an error message
             response = self.serial_port.readline().decode().strip()
             self.get_logger().info(f"Write motor positions with PID speeds response: {response}")
             self.get_logger().info(f"Response type: {type(response)}")
 
-            if response == "<Written>":
-                elapsed_time = time.time() - start_time
-                self.get_logger().info(f"Time spent waiting for '<Written>': {elapsed_time:.6f} seconds")
-                self.get_logger().info("Successfully wrote motor positions and speeds.")
-                break  # Exit the loop once the correct response is received
+            if response.startswith("<P") and response.endswith(">"):
+                parsed_data = self.parse_arduino_msg(response)  # Parse positions and speeds
 
-            # Handle motor-specific error response
-            elif response.startswith("Err") and response.endswith("-"):
-                try:
-                    motor_index = int(response[3:-1])  # Extract motor index from the error message
-                    self.get_logger().error(f"Motor {motor_index} reported an error: {response}")
+                # Ensure parsed_data contains both positions and speeds
+                if "positions" in parsed_data and "speeds" in parsed_data:
+                    positions = parsed_data["positions"]
+                    speeds = parsed_data["speeds"]
+
+                    # Check for None values in positions, indicating errors
+                    if any(p is None for p in positions):
+                        self.get_logger().warn("Error reading motor positions, retrying...")
+                        retries += 1  # Increment retry counter
+                        time.sleep(0.0001)  # Optional delay before retrying
+                        continue  # Retry reading the positions
+
+                    # If no errors, store the parsed positions and speeds
                     
-                    # Placeholder for handling specific motor errors
-                    # Add your functionality here (e.g., retry logic, logging, stopping the motor, etc.)
-                    self.stop_motor(motor_index)
-                except ValueError:
-                    self.get_logger().error(f"Failed to parse motor index from response: {response}")
-            
-            # If unexpected response, log it and retry
-            elif response:
-                self.get_logger().warn(f"Unexpected response: {response}, retrying...")
-            
-            time.sleep(0.0001)  # Optional small delay to prevent busy-waiting
+                    self.current_speeds = speeds  # Store speeds if needed for further logic
+                else:
+                    self.get_logger().error("Invalid data received from Arduino")
+
+                # If valid data is found, update positions
+                f_time = time.time()
+                m_alpha = 1 - ((1 - self.lpfw) * (self.lpfw_dr ** self.lpfw_dr_f))  # Apply filtering
+
+                for i in range(self.num_joints):
+                    if ~(abs(self.current_positions[i] - parsed_data["positions"][i]) > 5.0):
+                        self.current_positions[i] = (
+                            m_alpha * parsed_data["positions"][i] + (1 - m_alpha) * self.current_positions[i]
+                        )
+                    self.current_positions_f[i] = parsed_data["positions"][i]
+                    
+
+                self.get_logger().info(f"Passed time in reading positions: {f_time - s_time:.6f} seconds")
+                self.get_logger().info("Successfully read current motor positions.")
+                #self.prev_PID_time = s_time
+                return  # Exit the method on success
+
+            # If response is invalid, increment retries and log a warning
+            self.get_logger().warn("Invalid response, retrying...")
+            retries += 1
+            time.sleep(0.00075)  # Optional delay before retrying
+        
+        
+
+        # If retries are exhausted, stop all motors
+        self.get_logger().error("Failed to read motor positions after maximum retries. Stopping all motors.")
+        for motor_index in range(1, len(self.target_positions) + 1):  # Assuming motors are indexed 1 to n
+            stop_command = f"stop{motor_index}\n"
+            self.serial_port.write(stop_command.encode())
+            self.get_logger().info(f"Sent stop command to motor {motor_index}")
+
+
 
     def stop_motor(self, motor_index):
         """
@@ -241,6 +300,43 @@ class MotorController(Node):
         self.serial_port.write(b"roff\n")
         response = self.serial_port.readline().decode().strip()
         self.get_logger().info(f"Relay off response: {response}")
+
+    def parse_arduino_msg(self, response):
+        try:
+            response = response.strip('<>')  # Remove angle brackets
+
+            if response.startswith("P"):  # Check if it's a position/speed message
+                parts = response[1:].split()  # Split values by space
+                positions = []
+                speeds = []
+
+                for i, value in enumerate(parts):  # Iterate through the parsed parts
+                    if value == "E,E":
+                        positions.append(self.current_positions[i])  # Keep last known position
+                        speeds.append(0)  # Speed unknown
+                        self.write_velocities[i] = False
+                    elif value == "Err,Err":
+                        positions.append(None)  # Mark errors as None
+                        speeds.append(0)
+                    else:
+                        pos, speed = value.split(",")  # Split into position and speed
+                        positions.append(int(pos))  # Convert to integer
+                        speeds.append(int(speed))
+
+                return {"positions": positions, "speeds": speeds}
+
+            elif response.startswith("a"):  # If it's voltage data
+                return {"voltage": int(response[1:])}
+
+            else:
+                self.get_logger().error(f"Unknown response format: {response}")
+        except Exception as e:
+            self.get_logger().error(f"Error parsing response: {response} | {e}")
+
+        return {}
+
+
+
 
     def parse_arduino_response(self, response):
         try:
@@ -298,7 +394,16 @@ class MotorController(Node):
         self.write_motor_positions_with_pid_speeds()
 
     def calculate_pid_speeds(self):
-        m_lpfw = 1 - ((1 - self.lpfw)*(self.lpfw_dr**self.lpfw_dr_f))
+        self.del_t = time.time() - self.prev_PID_time
+        self.m_lpfw = 1 - ((1 - self.lpfw)*(self.lpfw_dr**self.lpfw_dr_f))
+        msg = Float64()
+        msg.data = self.m_lpfw  # Assign the filtered value
+        self.weight_publisher_.publish(msg)
+
+        msg = Float64()
+        msg.data = self.del_t  # Assign the filtered value
+        self.dt_publisher_.publish(msg)
+
         error = [float(self.target_positions[i]) - float(self.current_positions[i]) for i in range(self.num_joints)]
         self.get_logger().info(f"Error = {error}")
 
@@ -320,10 +425,19 @@ class MotorController(Node):
 
         # Calculate velocities (instead of efforts)
         for i in range(self.num_joints):
+            self.prev_speed[i] = self.apply_joint_velocities[i]/100
             if abs(error[i]) > self.acceptable_error:
                 self.joint_reached[i] = False
                 self.calc_vel_rad[i] = (self.proportional_gain[i] * error_r[i]) \
-                                                + (self.derivative_gain[i] * (-self.prev_speed[i]/57.29)) \
+                                                + (self.derivative_gain[i] * (error_derivative[i])) \
+                                                + (self.integral_gain[i] * self.dt * self.integral_error_r[i])
+                
+                self.calc_vel_rad_with_speed[i] = (self.proportional_gain[i] * error_r[i]) \
+                                                + (self.derivative_gain[i] * (-self.prev_speed[i])/57.29) \
+                                                + (self.integral_gain[i] * self.dt * self.integral_error_r[i])
+                
+                self.calc_vel_rad_with_motor_speed[i] = (self.proportional_gain[i] * error_r[i]) \
+                                                + (self.derivative_gain[i] * (-self.prev_motor_speeds[i])/57.29) \
                                                 + (self.integral_gain[i] * self.dt * self.integral_error_r[i])
 
 
@@ -333,18 +447,39 @@ class MotorController(Node):
                 
                 else:
                     self.current_calc_speed[i] = int((np.clip(self.calc_vel_rad[i]*57.29, -60, 60))*100)
-                self.apply_joint_velocities[i] = int(m_lpfw * self.current_calc_speed[i] + (1 - m_lpfw) * self.prev_speed[i])
+                
+                self.current_calc_speed_d_speed[i] = int((np.clip(self.calc_vel_rad_with_speed[i]*57.29, -60, 60))*100)
+                self.current_calc_speed_dm_speed[i] = int((np.clip(self.calc_vel_rad_with_motor_speed[i]*57.29, -60, 60))*100)
+                if self.write_velocities[i] == True:
+                    self.apply_joint_velocities[i] = int(self.m_lpfw * self.current_calc_speed_d_speed[i] + (1 - self.m_lpfw) * self.prev_speed[i])
+                else:
+                    self.apply_joint_velocities[i] = 0
             else:
                 self.joint_reached[i] = True
                 self.apply_joint_velocities[i] = 0
             
-            self.prev_speed[i] = self.apply_joint_velocities[i]
-        self.lpfw_dr_f +=1
             
+            self.prev_PID_time = time.time()
+        #self.lpfw_dr_f +=1
+    
+
+        message = Float64MultiArray()
+        message.data = [float(v/100) for v in self.current_calc_speed]  # Convert velocities to float
+        self.vel_error_d.publish(message)
+
+        message = Float64MultiArray()
+        message.data = [float(v/100) for v in self.current_calc_speed_d_speed]  # Convert velocities to float
+        self.vel_calc_speed.publish(message)
+
+        message = Float64MultiArray()
+        message.data = [float(v/100) for v in self.current_calc_speed_dm_speed]  # Convert velocities to float
+        self.vel_motor_speed.publish(message)
+
+
 
         # Ensure that apply_joint_velocities are floats before publishing
         message = Float64MultiArray()
-        message.data = [float(v) for v in self.apply_joint_velocities]  # Convert velocities to float
+        message.data = [float(v/100) for v in self.apply_joint_velocities]  # Convert velocities to float
         self.velocities_publisher_.publish(message)
 
         # Publish reference joint states (target positions)
@@ -357,8 +492,33 @@ class MotorController(Node):
         current_state_message.data = [float(p) for p in self.current_positions] + [float(v) for v in self.current_speeds]  # Convert both positions and velocities
         self.current_state_publisher_.publish(current_state_message)
 
+        current_pos_message = Float64MultiArray()
+        current_pos_message.data = [float(p) for p in self.current_positions_f]  # Convert both positions and velocities
+        self.current_pos_publisher_.publish(current_pos_message)
+
         scaled_joint_velocities = [v / 100 for v in self.apply_joint_velocities]
         scaled_calc_speed = [v / 100 for v in self.current_calc_speed]
+
+        D_error = [d * (-s) for d, s in zip(self.derivative_gain, self.prev_speed)]
+        
+        msg = Float64MultiArray()  # Create the Float64MultiArray message
+        msg.data = D_error  # Assign the D_error list to the `data` field
+        
+        self.D_error_publisher_.publish(msg)  # Publish the message
+
+        Derivative_error_C = [d * (s * 57.29) for d, s in zip(self.derivative_gain, error_derivative)]
+        
+        msg = Float64MultiArray()  # Create the Float64MultiArray message
+        msg.data = Derivative_error_C  # Assign the D_error list to the `data` field
+        
+        self.Derivative_error_publisher_.publish(msg)  # Publish the message
+
+        Derivative_error_M = [d * (-s) for d, s in zip(self.derivative_gain, self.prev_motor_speeds)]
+        
+        msg = Float64MultiArray()  # Create the Float64MultiArray message
+        msg.data = Derivative_error_M  # Assign the D_error list to the `data` field
+        
+        self.Derivativem_error_publisher_.publish(msg)  # Publish the message
 
         # Log the scaled values
         self.get_logger().info(f"Publishing Joint Velocities (v1-v7): {scaled_joint_velocities}")
@@ -366,52 +526,48 @@ class MotorController(Node):
         
         self.get_logger().info(f"Publishing Current State (Position, Velocity): {current_state_message.data}")
         self.get_logger().info(f"Publishing Integral Error: {self.integral_error_r}")
+        self.get_logger().info(f"Publishing D Error: {[d * (-s) for d, s in zip(self.derivative_gain, self.prev_speed)]}")
         self.get_logger().info(f"Publishing Derivative Error: {[d * (s * 57.29) for d, s in zip(self.derivative_gain, error_derivative)]}")
         self.get_logger().info(f"Joint Reached Status: {self.joint_reached}")
         self.get_logger().info(f"Error: {error}")
 
-
-
-    def update_current_positions_and_speeds(self):
-        max_retries = 1  # Maximum number of retries
+    def update_current_positions(self):
+        max_retries = 3  # Maximum number of retries
         retries = 0  # Retry counter
         ct = time.time()
         self.get_logger().info(f"Passed time inbetween reads: {ct- self.prev_time}")
         self.prev_time = ct
         while retries < max_retries:
-            # Send the command to request positions and speeds
-            self.serial_port.write(b"rmpv\n")
-            self.get_logger().info("Requesting current motor positions and speeds...")
+            # Send the command to request positions (no speeds)
+            s_time = time.time()
+            self.serial_port.write(b"rmpv\n")  # Request motor positions
+            self.get_logger().info("Requesting current motor positions...")
 
             response = self.serial_port.readline().decode().strip()
-            self.get_logger().info(f"Updating current motor positions and speeds: {response}")
+            self.get_logger().info(f"Updating current motor positions: {response}")
 
-            # Check if the response is valid
+            # Check if the response is valid (only positions)
             if response.startswith("<P") and response.endswith(">"):
-                parsed_data = self.parse_arduino_response(response)
+                parsed_data = self.parse_arduino_msg(response)  # Parse positions (no speeds)
 
-                # Check for None values in positions or speeds, indicating errors
+                # Check for None values in positions, indicating errors
                 if any(p is None for p in parsed_data["positions"]):
                     self.get_logger().warn("Error reading motor positions, retrying...")
                     retries += 1  # Increment retry counter
-                    time.sleep(0.0001)  # Optional delay before retrying
-                    continue  # Retry reading the positions and speeds
+                    time.sleep(0.001)  # Optional delay before retrying
+                    continue  # Retry reading the positions
 
-                # If valid data is found, update positions and speeds
-                #alpha = 0.9  # Smoothing factor (adjust as needed)
-                #self.current_positions = alpha * parsed_data["positions"] + (1 - alpha) * self.current_positions
-                m_alpha = 1 - ((1 - self.lpfw) * (self.lpfw_dr ** self.lpfw_dr_f))
+                # If valid data is found, update positions
+                f_time = time.time()
+                m_alpha = 1 - ((1 - self.lpfw) * (self.lpfw_dr ** self.lpfw_dr_f))  # Apply filtering
+
                 for i in range(self.num_joints):
                     self.current_positions[i] = (
                         m_alpha * parsed_data["positions"][i] + (1 - m_alpha) * self.current_positions[i]
                     )
 
-                #self.current_positions = parsed_data["positions"]
-                #self.current_speeds = parsed_data["speeds"]
-
-                
-
-                self.get_logger().info("Successfully read current motor positions and speeds.")
+                self.get_logger().info(f"Passed time in reading positions: {f_time - s_time:.6f} seconds")
+                self.get_logger().info("Successfully read current motor positions.")
                 return  # Exit the method on success
 
             # If response is invalid, increment retries and log a warning
@@ -420,7 +576,7 @@ class MotorController(Node):
             time.sleep(0.00001)  # Optional delay before retrying
 
         # If retries are exhausted, stop all motors
-        self.get_logger().error("Failed to read motor positions and speeds after maximum retries. Stopping all motors.")
+        self.get_logger().error("Failed to read motor positions after maximum retries. Stopping all motors.")
         for motor_index in range(1, len(self.target_positions) + 1):  # Assuming motors are indexed 1 to n
             stop_command = f"stop{motor_index}\n"
             self.serial_port.write(stop_command.encode())
@@ -428,21 +584,21 @@ class MotorController(Node):
 
 
 
-
-
     def timer_callback(self):
         if not self.poweroff:
-            start_time = time.monotonic()  # Start time for total loop execution
-
-            # Step 1: Read motor positions and speeds
-            t1 = time.monotonic()
-            self.update_current_positions_and_speeds()
-            t1_elapsed = time.monotonic() - t1
-            self.get_logger().info(f"Time for updating motor positions and speeds: {t1_elapsed:.6f} seconds")
-
-            # Step 2: Compute joint displacements & publish
-            t2 = time.monotonic()
+            
+            # ********************************************************************************
             joint_displacements = [current - initial for current, initial in zip(self.current_positions, self.initial_positions)]
+            self.get_logger().info(f"Joint Displacements {joint_displacements}")
+            self.get_logger().info(f"Current Positions {self.current_positions}")
+            self.get_logger().info(f"Initial Positions {self.initial_positions}")
+            # Create and populate the message
+            joint_displacement_msg = Float64MultiArray()
+            joint_displacement_msg.data = [
+                float(current - initial)
+                for current, initial in zip(self.current_positions, self.initial_positions)
+            ]
+
 
             # Create and publish joint displacement message
             joint_displacement_msg = Float64MultiArray()
@@ -457,28 +613,18 @@ class MotorController(Node):
             t2_elapsed = time.monotonic() - t2
             self.get_logger().info(f"Time for displacement calculation & publishing: {t2_elapsed:.6f} seconds")
 
-            # Step 3: Compute PID speeds
-            t3 = time.monotonic()
+            self.get_logger().info(f"Done reading the current motors' state")
+            t3 = time.time()
             self.calculate_pid_speeds()
-            t3_elapsed = time.monotonic() - t3
-            self.get_logger().info(f"Time for PID calculation: {t3_elapsed:.6f} seconds")
-
-            # Step 4: Send motor commands
-            t4 = time.monotonic()
+            t4 = time.time()    
+            self.get_logger().info(f"Time spent calculating PID speeds: {t4 - t3:.6f} seconds")
+            self.get_logger().info(f"Done calculating the required motors' speeds")
+            t4 = time.time()
             self.write_motor_positions_with_pid_speeds()
-            t4_elapsed = time.monotonic() - t4
-            self.get_logger().info(f"Time for sending motor commands: {t4_elapsed:.6f} seconds")
-
-            # Total loop time
-            elapsed_time = time.monotonic() - start_time
-            remaining_time = max(0.0933 - elapsed_time, 0)  # Ensure positive delay
-
-            self.get_logger().info(f"Total loop execution time: {elapsed_time:.6f} seconds")
-            self.get_logger().info(f"Remaining Time to maintain rate: {remaining_time:.6f} seconds")
-
-            # Maintain consistent loop frequency
-            time.sleep(remaining_time)
-
+            t5 = time.time()    
+            self.get_logger().info(f"Time spent writing motor positions with PID speeds: {t5 - t4:.6f} seconds")
+    
+            
     def voltage_callback(self):
         self.read_motor_voltage()
 
