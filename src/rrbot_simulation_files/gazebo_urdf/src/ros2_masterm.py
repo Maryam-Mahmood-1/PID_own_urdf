@@ -31,8 +31,10 @@ class MotorController(Node):
         self.integral_gain = [0.000196, 0.000196, 0.0000, 0.0000, 0.0, 0.0, 0.0]
         self.integral_error = [0.0] * self.num_joints
         self.integral_error_r = [0.0] * self.num_joints
+
         self.dt = 0.05
         self.prev_PID_time = 0.0
+
         self.prev_error = [0.0] * self.num_joints
         self.prev_speed = [0.0] * self.num_joints
         self.alpha = 0.6
@@ -167,17 +169,17 @@ class MotorController(Node):
             self.get_logger().info(f"Initial motor positions response: {response}")
 
             # Check if the response starts with "<P", contains "V", and ends with ">"
-            if response.startswith("<P") and "V" in response and response.endswith(">"):
+            if response.startswith("<P") and response.endswith(">"):
                 parsed_data = self.parse_arduino_response(response)
 
                 # Check for None values in positions or speeds, indicating errors
-                if any(p is None for p in parsed_data["positions"]) or any(s is None for s in parsed_data["speeds"]):
+                if any(p is None for p in parsed_data["positions"]):
                     self.get_logger().warn("Error reading motor positions or speeds, retrying...")
                     time.sleep(0.001)  # Optional delay before retrying
                     continue  # Retry reading the positions and speeds, resend the command
 
                 # If valid data is found, update positions and speeds
-                
+
 
                 # Ensure deep copies are made to avoid shared references
                 self.initial_positions = copy.deepcopy(parsed_data["positions"])
@@ -338,19 +340,22 @@ class MotorController(Node):
 
     def parse_arduino_response(self, response):
         try:
-            response = response.strip('<>')  # Remove the surrounding angle brackets
-            if response.startswith("P"):
-                parts = response[1:].split("V")  # Split the positions and velocities
-                positions = self.parse_motor_data(parts[0])  # Parse positions
-                speeds = self.parse_motor_data(parts[1])  # Parse speeds
-                return {"positions": positions, "speeds": speeds}
-            elif response.startswith("a"):  # For voltage data, if needed
-                return {"voltage": int(response[1:])}
+            response = response.strip('<>')  # Remove surrounding angle brackets
+            
+            if response.startswith("P"):  # Ensure it's a position data response
+                parts = response[1:].split()  # Split by spaces to get position values
+                positions = [float(p) for p in parts]  # Convert to float
+                
+                return {"positions": positions}
+            
             else:
                 self.get_logger().error(f"Unknown response format: {response}")
+
         except Exception as e:
             self.get_logger().error(f"Error parsing response: {response} | {e}")
+
         return {}
+
 
     def parse_motor_data(self, data):
         """Helper function to parse motor data and handle 'E' values."""
@@ -526,12 +531,12 @@ class MotorController(Node):
         self.get_logger().info(f"Joint Reached Status: {self.joint_reached}")
         self.get_logger().info(f"Error: {error}")
 
-
-
     def update_current_positions(self):
         max_retries = 3  # Maximum number of retries
         retries = 0  # Retry counter
-
+        ct = time.time()
+        self.get_logger().info(f"Passed time inbetween reads: {ct- self.prev_time}")
+        self.prev_time = ct
         while retries < max_retries:
             # Send the command to request positions (no speeds)
             s_time = time.time()
@@ -568,7 +573,7 @@ class MotorController(Node):
             # If response is invalid, increment retries and log a warning
             self.get_logger().warn("Invalid response, retrying...")
             retries += 1
-            time.sleep(0.01)  # Optional delay before retrying
+            time.sleep(0.00001)  # Optional delay before retrying
 
         # If retries are exhausted, stop all motors
         self.get_logger().error("Failed to read motor positions after maximum retries. Stopping all motors.")
@@ -576,7 +581,6 @@ class MotorController(Node):
             stop_command = f"stop{motor_index}\n"
             self.serial_port.write(stop_command.encode())
             self.get_logger().info(f"Sent stop command to motor {motor_index}")
-
 
 
 
@@ -595,18 +599,19 @@ class MotorController(Node):
                 for current, initial in zip(self.current_positions, self.initial_positions)
             ]
 
-            # Publish the message
+
+            # Create and publish joint displacement message
+            joint_displacement_msg = Float64MultiArray()
+            joint_displacement_msg.data = [float(d) for d in joint_displacements]
             self.rel_value_publisher_.publish(joint_displacement_msg)
 
-            # Create and populate the message with zeros
+            # Publish original joint values (all zeros)
             joint_org_msg = Float64MultiArray()
-            joint_org_msg.data = [0.0] * self.num_joints  # Assuming self.num_joints defines the number of joints
-
-            # Publish the message
+            joint_org_msg.data = [0.0] * self.num_joints
             self.org_value_publisher_.publish(joint_org_msg)
 
-            self.get_logger().info(f"Joint displacements: {joint_displacements}")
-            # ********************************************************************************
+            t2_elapsed = time.monotonic() - t2
+            self.get_logger().info(f"Time for displacement calculation & publishing: {t2_elapsed:.6f} seconds")
 
             self.get_logger().info(f"Done reading the current motors' state")
             t3 = time.time()
@@ -619,6 +624,7 @@ class MotorController(Node):
             t5 = time.time()    
             self.get_logger().info(f"Time spent writing motor positions with PID speeds: {t5 - t4:.6f} seconds")
     
+            
     def voltage_callback(self):
         self.read_motor_voltage()
 
